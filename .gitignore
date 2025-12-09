@@ -13,11 +13,4 @@
 .externalNativeBuild
 .cxx
 local.properties
-build.gradle.kts
-gradle.properties
-gradle.xml
-gradle-wrapper.jar
-gradle-wrapper.properties
-gradlew
-gradlew.bat
-settings.gradle.kts
+
