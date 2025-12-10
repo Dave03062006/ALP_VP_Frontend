@@ -59,6 +59,7 @@ fun Homepage() {
         FloatingActionButton(
             onClick = { /* TODO: Show popup */ },
             containerColor = Color(0xFFD946EF),
+            shape = CircleShape,
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(16.dp)
@@ -232,8 +233,8 @@ fun StatisticsCard() {
             if (isExpanded) {
                 Spacer(modifier = Modifier.height(12.dp))
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    StatCard("Total Spent", "$0.00", Color(0xFFE9D5FF), Icons.Default.Star, Modifier.weight(1f))
-                    StatCard("This Month", "$0.00", Color(0xFFBFDBFE), Icons.Default.DateRange, Modifier.weight(1f))
+                    StatCard("Total Spent", "Rp 0.00", Color(0xFFE9D5FF), Icons.Default.Star, Modifier.weight(1f))
+                    StatCard("This Month", "Rp 0.00", Color(0xFFBFDBFE), Icons.Default.DateRange, Modifier.weight(1f))
                 }
                 Spacer(modifier = Modifier.height(12.dp))
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
