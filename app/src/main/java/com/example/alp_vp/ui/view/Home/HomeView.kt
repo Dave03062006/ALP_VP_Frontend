@@ -1,4 +1,4 @@
-package com.example.alp_vp.ui.view
+package com.example.alp_vp.ui.view.Home
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -16,9 +16,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.alp_vp.ui.view.TransactionDialog
 
 @Composable
 fun HomeView() {
+    var showTransactionDialog by remember { mutableStateOf(false) }
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
@@ -70,6 +72,14 @@ fun HomeView() {
                 tint = Color.White
             )
         }
+    }
+    if(showTransactionDialog){
+        TransactionDialog(
+            onDismiss = { showTransactionDialog = false},
+            onConfirm = {
+                showTransactionDialog = false
+            }
+        )
     }
 }
 @Preview(showBackground = true, showSystemUi = true)

@@ -1,5 +1,6 @@
-package com.example.alp_vp.ui.view
+package com.example.alp_vp.ui.view.Home
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,9 +12,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -30,17 +31,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 
 @Composable
-fun RecentTransactionsCard() {
+fun SpendingByGameCard() {
     var isExpanded by remember { mutableStateOf(true) }
 
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
-        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFE0D4F7))
+        border = BorderStroke(1.dp, Color(0xFFE0D4F7))
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(
@@ -50,13 +50,13 @@ fun RecentTransactionsCard() {
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
-                        imageVector = Icons.Default.Notifications,
+                        imageVector = Icons.Default.Favorite,
                         contentDescription = null,
-                        tint = Color(0xFF6B4FA0),
+                        tint = Color(0xFF9C6FDE),
                         modifier = Modifier.size(20.dp)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("Recent Transactions", fontWeight = FontWeight.SemiBold)
+                    Text("Spending by Game", fontWeight = FontWeight.SemiBold)
                 }
                 IconButton(onClick = { isExpanded = !isExpanded }) {
                     Icon(
@@ -68,17 +68,11 @@ fun RecentTransactionsCard() {
 
             if (isExpanded) {
                 Spacer(modifier = Modifier.height(24.dp))
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text("No transactions yet", fontWeight = FontWeight.Medium)
-                    Text(
-                        "Start tracking your gaming expenses",
-                        fontSize = 12.sp,
-                        color = Color.Gray
-                    )
-                }
+                Text(
+                    "No data available",
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                    color = Color.Gray
+                )
                 Spacer(modifier = Modifier.height(16.dp))
             }
         }
@@ -87,6 +81,6 @@ fun RecentTransactionsCard() {
 
 @Composable
 @Preview(showBackground = true)
-fun PreviewRecentTransactionsCard() {
-    RecentTransactionsCard()
+fun SpendingByGameCardPreview() {
+    SpendingByGameCard()
 }

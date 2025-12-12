@@ -1,5 +1,6 @@
-package com.example.alp_vp.ui.view
+package com.example.alp_vp.ui.view.Home
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -39,7 +40,7 @@ fun GameSelector() {
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
-        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFE0D4F7))
+        border = BorderStroke(1.dp, Color(0xFFE0D4F7))
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(

@@ -1,8 +1,7 @@
-package com.example.alp_vp.ui.view
+package com.example.alp_vp.ui.view.Shop
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -22,10 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Column
-import androidx.compose.material.icons.filled.Email
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
 
 @Composable
 fun ShopView(onBack: () -> Unit = {}) {
@@ -39,9 +35,8 @@ fun ShopView(onBack: () -> Unit = {}) {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp)
-                .padding(bottom = 96.dp) // leave room for FAB
+                .padding(bottom = 96.dp)
         ) {
-            // Header
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -66,15 +61,13 @@ fun ShopView(onBack: () -> Unit = {}) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Points card (simple version reusing visual style)
             Card(
-                modifier = Modifier
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp),
                 colors = CardDefaults.cardColors(containerColor = Color(0xFFFFE4B5)),
                 border = BorderStroke(2.dp, Color(0xFFFFD27A))
             ) {
-                Column(modifier = Modifier.padding(20.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                Column(modifier = Modifier.padding(20.dp).fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
                     Icon(Icons.Default.Favorite, contentDescription = null, tint = Color(0xFFD4AF37))
                     Spacer(modifier = Modifier.height(6.dp))
                     Text("Your Points", fontWeight = FontWeight.Medium)
@@ -86,7 +79,9 @@ fun ShopView(onBack: () -> Unit = {}) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Game selector grid
+
+            Spacer(modifier = Modifier.height(16.dp))
+
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp),
@@ -98,7 +93,6 @@ fun ShopView(onBack: () -> Unit = {}) {
                     Spacer(modifier = Modifier.height(12.dp))
 
                     val games = listOf("Valorant", "Genshin Impact", "Honkai Star Rail", "League of Legends", "Apex Legends", "Roblox")
-                    // 2 rows of 3 items
                     for (rowIndex in 0 until 2) {
                         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                             for (colIndex in 0 until 3) {
@@ -122,7 +116,6 @@ fun ShopView(onBack: () -> Unit = {}) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Voucher list
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 VoucherCard(
                     title = "10% VP Discount",
@@ -145,7 +138,6 @@ fun ShopView(onBack: () -> Unit = {}) {
             }
         }
 
-        // Floating Action Button - same design as HomeView
         FloatingActionButton(
             onClick = { /* TODO: Quick purchase or help */ },
             containerColor = Color(0xFFD946EF),
@@ -165,70 +157,6 @@ fun ShopView(onBack: () -> Unit = {}) {
     }
 }
 
-@Composable
-private fun GameChip(name: String, selected: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier) {
-    val bg = if (selected) Color(0xFFEBD7FF) else Color.White
-    val borderColor = if (selected) Color(0xFF9C6FDE) else Color(0xFFEDD8FF)
-    Card(
-        modifier = modifier
-            .height(72.dp)
-            .clickable(onClick = onClick),
-        shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = bg),
-        border = BorderStroke(2.dp, borderColor)
-    ) {
-        Box(contentAlignment = Alignment.Center) {
-            Text(name, textAlign = TextAlign.Center, fontSize = 12.sp, modifier = Modifier.padding(8.dp))
-        }
-    }
-}
-
-@Composable
-private fun VoucherCard(title: String, subtitle: String, costPoints: Int, rightLabel: String) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .heightIn(min = 88.dp),
-        shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFFFFE4B5)),
-        border = BorderStroke(2.dp, Color(0xFFFFC457))
-    ) {
-        Row(modifier = Modifier
-            .padding(16.dp)
-            .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Default.Email, contentDescription = null, tint = Color(0xFF8B4513))
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(title, fontWeight = FontWeight.SemiBold)
-                }
-                Spacer(modifier = Modifier.height(6.dp))
-                Text(subtitle, fontSize = 12.sp, color = Color(0xFF6B4FA0))
-                Spacer(modifier = Modifier.height(8.dp))
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Default.Favorite, contentDescription = null, tint = Color(0xFF8B4513), modifier = Modifier.size(16.dp))
-                    Spacer(modifier = Modifier.width(6.dp))
-                    Text("$costPoints Points", fontSize = 12.sp)
-                }
-            }
-
-            Column(horizontalAlignment = Alignment.End, verticalArrangement = Arrangement.SpaceBetween) {
-                Text(rightLabel, color = Color(0xFF0FA97A), fontWeight = FontWeight.Bold)
-                Spacer(modifier = Modifier.height(8.dp))
-                Button(
-                    onClick = { /* TODO: handle purchase */ },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFA46D)),
-                    shape = RoundedCornerShape(8.dp)
-                ) {
-                    Text("Purchase", color = Color.White)
-                }
-            }
-        }
-    }
-}
 
 @Preview(showBackground = true, showSystemUi = false)
 @Composable

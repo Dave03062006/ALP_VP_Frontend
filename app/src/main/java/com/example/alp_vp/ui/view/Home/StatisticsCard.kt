@@ -1,5 +1,6 @@
-package com.example.alp_vp.ui.view
+package com.example.alp_vp.ui.view.Home
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -30,6 +31,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -43,7 +45,7 @@ fun StatisticsCard() {
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
-        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFE0D4F7))
+        border = BorderStroke(1.dp, Color(0xFFE0D4F7))
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(
@@ -86,7 +88,7 @@ fun StatisticsCard() {
 }
 
 @Composable
-fun StatCard(title: String, value: String, bgColor: Color, icon: androidx.compose.ui.graphics.vector.ImageVector, modifier: Modifier = Modifier) {
+fun StatCard(title: String, value: String, bgColor: Color, icon: ImageVector, modifier: Modifier = Modifier) {
     Card(
         modifier = modifier,
         shape = RoundedCornerShape(12.dp),

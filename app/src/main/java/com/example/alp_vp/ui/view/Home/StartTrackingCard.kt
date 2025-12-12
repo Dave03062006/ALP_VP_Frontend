@@ -1,4 +1,4 @@
-package com.example.alp_vp.ui.view
+package com.example.alp_vp.ui.view.Home
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
