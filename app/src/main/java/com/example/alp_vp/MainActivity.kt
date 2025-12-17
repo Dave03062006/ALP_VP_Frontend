@@ -12,19 +12,23 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.alp_vp.ui.theme.ALP_VPTheme
+import com.example.alp_vp.ui.view.gacha.GachaScreen
+import com.example.alp_vp.ui.viewmodel.GachaViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        val app = application as MainApplication
+        val viewModel = GachaViewModel(
+            app.container.gachaRepository
+        )
+
         setContent {
             ALP_VPTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+                GachaScreen(viewModel)
             }
         }
     }
