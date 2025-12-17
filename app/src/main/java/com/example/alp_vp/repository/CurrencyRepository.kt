@@ -1,28 +1,26 @@
 package com.example.alp_vp.repository
 
-import com.example.alp_vp.model.ConversionResultResponse
-import com.example.alp_vp.model.ConvertCurrencyRequest
-import com.example.alp_vp.model.CurrencyRateResponse
-import com.example.alp_vp.model.GameResponse
+import com.example.alp_vp.dto.ConvertCurrencyRequest
+import com.example.alp_vp.dto.ConversionResultResponse
+import com.example.alp_vp.dto.CurrencyRateResponse
+import com.example.alp_vp.dto.GameResponse
+import com.example.alp_vp.model.WebResponse
 import com.example.alp_vp.service.CurrencyApiService
 
 class CurrencyRepository(private val apiService: CurrencyApiService) {
 
-    suspend fun getGames(): List<GameResponse> {
+    // Hanya memanggil API, return masih berupa WebResponse
+    suspend fun getAllGames(): WebResponse<List<GameResponse>> {
         return apiService.getAllGames()
     }
 
-    suspend fun calculatePrice(gameId: Int, currencyName: String, amount: Int): Double {
-        val request = ConvertCurrencyRequest(
-            gameId = gameId,
-            currencyName = currencyName,
-            amount = amount
-        )
-        val response = apiService.convertCurrency(request)
-        return response.idrValue
+    // Menerima object Request dari ViewModel, bukan parameter satu-satu
+    suspend fun convertCurrency(request: ConvertCurrencyRequest): WebResponse<ConversionResultResponse> {
+        return apiService.convertCurrency(request)
     }
 
-    suspend fun getRates(gameId: Int): List<CurrencyRateResponse> {
+    // Hanya memanggil API
+    suspend fun getCurrencyRates(gameId: Int): WebResponse<List<CurrencyRateResponse>> {
         return apiService.getCurrencyRates(gameId)
     }
 }

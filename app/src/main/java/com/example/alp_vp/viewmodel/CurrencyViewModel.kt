@@ -6,13 +6,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.alp_vp.model.GameResponse
+import com.example.alp_vp.dto.ConvertCurrencyRequest
+import com.example.alp_vp.dto.GameResponse
 import com.example.alp_vp.model.Voucher
 import com.example.alp_vp.container.RetrofitClient
 import com.example.alp_vp.repository.CurrencyRepository
 import kotlinx.coroutines.launch
-
-private val GameResponse.currency: Any
 
 class CurrencyViewModel : ViewModel() {
 
@@ -25,10 +24,11 @@ class CurrencyViewModel : ViewModel() {
         private set
 
     var inputAmount by mutableStateOf("")
-
     var selectedGameId by mutableStateOf(0)
 
     var resultIdr by mutableStateOf(0.0)
+    var currentRate by mutableStateOf(0.0)
+
     var isLoading by mutableStateOf(false)
     var errorMessage by mutableStateOf<String?>(null)
 
@@ -38,15 +38,21 @@ class CurrencyViewModel : ViewModel() {
             errorMessage = null
 
             try {
-                val fetchedGames = repository.getGames()
+                // Panggil Repository (return WebResponse)
+                val response = repository.getAllGames()
+
+                // LOGIC: Buka bungkus .data di sini
+                val fetchedGames = response.data
 
                 gamesList.clear()
                 gamesList.addAll(fetchedGames)
 
                 if (gamesList.isNotEmpty()) {
                     selectedGameId = gamesList[0].id
+                    fetchExchangeRate(selectedGameId)
                 }
 
+                // Data Dummy Voucher
                 vouchersList.clear()
                 vouchersList.addAll(
                     listOf(
@@ -56,10 +62,30 @@ class CurrencyViewModel : ViewModel() {
                 )
 
             } catch (e: Exception) {
-                errorMessage = "Gagal memuat data: ${e.localizedMessage}"
-                println("Error loading data: ${e.message}")
+                errorMessage = "Gagal memuat data: ${e.message}"
+                e.printStackTrace()
             } finally {
                 isLoading = false
+            }
+        }
+    }
+
+    fun fetchExchangeRate(gameId: Int) {
+        viewModelScope.launch {
+            try {
+                // Panggil Repository (return WebResponse)
+                val response = repository.getCurrencyRates(gameId)
+
+                // LOGIC: Buka bungkus .data di sini
+                val rates = response.data
+
+                if (rates.isNotEmpty()) {
+                    currentRate = rates[0].toIDR
+                } else {
+                    currentRate = 0.0
+                }
+            } catch (e: Exception) {
+                currentRate = 0.0
             }
         }
     }
@@ -74,13 +100,18 @@ class CurrencyViewModel : ViewModel() {
                     val selectedGame = gamesList.find { it.id == selectedGameId }
                     val currencyName = selectedGame?.currency ?: "Currency"
 
-                    val calculatedPrice = repository.calculatePrice(
+                    // LOGIC: Buat Request Object di sini
+                    val request = ConvertCurrencyRequest(
                         gameId = selectedGameId,
                         currencyName = currencyName,
                         amount = amount
                     )
 
-                    resultIdr = calculatedPrice
+                    // Kirim Request Object ke Repository
+                    val response = repository.convertCurrency(request)
+
+                    // LOGIC: Ambil hasil dari response.data
+                    resultIdr = response.data.idrValue
 
                 } catch (e: Exception) {
                     println("Error calculating: ${e.message}")
@@ -92,5 +123,10 @@ class CurrencyViewModel : ViewModel() {
         } else {
             resultIdr = 0.0
         }
+    }
+
+    fun calculateManual(amount: String) {
+        val valAmount = amount.toIntOrNull() ?: 0
+        resultIdr = valAmount * currentRate
     }
 }
