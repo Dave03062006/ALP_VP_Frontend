@@ -8,12 +8,10 @@ import com.example.alp_vp.service.CurrencyApiService
 
 class CurrencyRepository(private val apiService: CurrencyApiService) {
 
-    // Fungsi untuk mendapatkan list game
     suspend fun getGames(): List<GameResponse> {
         return apiService.getAllGames()
     }
 
-    // Fungsi untuk menghitung konversi harga
     suspend fun calculatePrice(gameId: Int, currencyName: String, amount: Int): Double {
         val request = ConvertCurrencyRequest(
             gameId = gameId,
@@ -24,7 +22,6 @@ class CurrencyRepository(private val apiService: CurrencyApiService) {
         return response.idrValue
     }
 
-    // Fungsi untuk mendapatkan list harga/rate per game
     suspend fun getRates(gameId: Int): List<CurrencyRateResponse> {
         return apiService.getCurrencyRates(gameId)
     }

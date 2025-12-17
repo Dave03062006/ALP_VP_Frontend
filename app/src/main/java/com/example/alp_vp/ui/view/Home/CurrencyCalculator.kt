@@ -34,30 +34,23 @@ import com.example.alp_vp.model.GameResponse
 import com.example.alp_vp.container.RetrofitClient
 import com.example.alp_vp.repository.CurrencyRepository
 
-// --- VIEWMODEL (Otak Aplikasi) ---
 class CalculatorViewModel : ViewModel() {
 
-    // Inisialisasi Repository
     private val repository = CurrencyRepository(RetrofitClient.instance)
 
-    // State untuk Data Game (Dari Backend)
     var gamesList = mutableStateListOf<GameResponse>()
 
-    // State untuk Logic Hitung
-    var currentRate by mutableStateOf(0.0)    // Harga per 1 unit (dari backend)
-    var calculatedCost by mutableStateOf(0.0) // Hasil hitungan manual
+    var currentRate by mutableStateOf(0.0)
+    var calculatedCost by mutableStateOf(0.0)
     var isLoading by mutableStateOf(false)
     var errorMessage by mutableStateOf<String?>(null)
 
-    // Bundle standar untuk tabel harga (Disimpan di frontend untuk referensi tampilan)
-    // Map ID Game ke List Bundle
     private val standardBundlesMap = mapOf(
         "Valorant" to listOf(475, 1000, 2050, 3650, 5350, 11000),
         "Genshin Impact" to listOf(60, 300, 980, 1980, 3280, 6480),
         "Roblox" to listOf(400, 800, 1700, 4500, 10000)
     )
 
-    // Fungsi: Ambil List Game dari Backend
     fun fetchGames() {
         viewModelScope.launch {
             isLoading = true
@@ -73,67 +66,53 @@ class CalculatorViewModel : ViewModel() {
         }
     }
 
-    // Fungsi: Ambil Rate Harga dari Backend
     fun fetchExchangeRate(gameId: Int) {
         viewModelScope.launch {
             isLoading = true
             try {
-                // Panggil API getRates
                 val rates = repository.getRates(gameId)
 
-                // Ambil rate pertama (atau sesuaikan logika jika ada banyak currency)
-                // Backend mengirim CurrencyRateResponse
                 if (rates.isNotEmpty()) {
-                    currentRate = rates[0].toIDR // Ambil field toIDR
+                    currentRate = rates[0].toIDR
                 } else {
                     currentRate = 0.0
                 }
             } catch (e: Exception) {
                 currentRate = 0.0
-                // Error silent agar user tidak terganggu popup, cukup harga jadi 0
             } finally {
                 isLoading = false
             }
         }
     }
 
-    // Fungsi: Hitung Manual (Di Frontend, menggunakan Rate yang sudah diambil)
-    // Kita hitung di sini agar responsif tanpa loading setiap ketik
     fun calculateManual(amount: String) {
         val valAmount = amount.toIntOrNull() ?: 0
         calculatedCost = valAmount * currentRate
     }
 
-    // Helper untuk UI ambil bundle berdasarkan nama game
     fun getBundlesForGame(gameName: String): List<Int> {
         return standardBundlesMap[gameName] ?: listOf(100, 500, 1000)
     }
 }
 
-// --- UI COMPOSABLE ---
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CurrencyCalculatorView(
     viewModel: CalculatorViewModel = viewModel()
 ) {
-    // 1. Load Game saat pertama dibuka
     LaunchedEffect(Unit) {
         viewModel.fetchGames()
     }
 
-    // State Lokal UI
     var selectedGameId by remember { mutableStateOf<Int?>(null) }
     var amountInput by remember { mutableStateOf("") }
 
-    // Pilih game pertama otomatis jika list sudah termuat
     if (selectedGameId == null && viewModel.gamesList.isNotEmpty()) {
         selectedGameId = viewModel.gamesList[0].id
     }
 
-    // Data Game Terpilih
     val selectedGameData = viewModel.gamesList.find { it.id == selectedGameId }
 
-    // Jika game berubah, ambil rate baru
     LaunchedEffect(selectedGameId) {
         if (selectedGameId != null) {
             viewModel.fetchExchangeRate(selectedGameId!!)

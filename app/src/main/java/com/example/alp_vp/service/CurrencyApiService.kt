@@ -11,16 +11,12 @@ import retrofit2.http.Query
 
 interface CurrencyApiService {
 
-    // Ambil daftar semua game
     @GET("/games")
     suspend fun getAllGames(): List<GameResponse>
 
-    // Hitung harga currency (Kirim data JSON di body)
     @POST("/currency/convert")
     suspend fun convertCurrency(@Body request: ConvertCurrencyRequest): ConversionResultResponse
 
-    // Ambil rate harga untuk tabel "Official Prices"
-    // Contoh: /currency-rates?gameId=1
     @GET("/currency-rates")
     suspend fun getCurrencyRates(@Query("gameId") gameId: Int): List<CurrencyRateResponse>
 }

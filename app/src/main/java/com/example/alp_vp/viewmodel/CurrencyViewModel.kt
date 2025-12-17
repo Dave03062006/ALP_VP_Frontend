@@ -6,91 +6,90 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.alp_vp.model.Game
+import com.example.alp_vp.model.GameResponse
 import com.example.alp_vp.model.Voucher
-import kotlinx.coroutines.delay
+import com.example.alp_vp.container.RetrofitClient
+import com.example.alp_vp.repository.CurrencyRepository
 import kotlinx.coroutines.launch
+
+private val GameResponse.currency: Any
 
 class CurrencyViewModel : ViewModel() {
 
-    // --- STATE VARIABLES (Data yang berubah-ubah di layar) ---
+    private val repository = CurrencyRepository(RetrofitClient.instance)
 
-    // List Game untuk Grid
-    var gamesList = mutableStateListOf<Game>()
+    var gamesList = mutableStateListOf<GameResponse>()
         private set
 
-    // List Voucher untuk Slider
     var vouchersList = mutableStateListOf<Voucher>()
         private set
 
-    // Input dari User
-    var inputAmount by mutableStateOf("") // Menggunakan String agar textfield aman
-    var selectedGameId by mutableStateOf(1) // Default ID game pertama
+    var inputAmount by mutableStateOf("")
 
-    // Hasil Perhitungan
+    var selectedGameId by mutableStateOf(0)
+
     var resultIdr by mutableStateOf(0.0)
-
-    // Status Loading (Opsional, untuk efek loading)
     var isLoading by mutableStateOf(false)
+    var errorMessage by mutableStateOf<String?>(null)
 
-    // --- FUNGSI LOGIKA ---
-
-    // 1. Dipanggil saat halaman dibuka (Load Data Dummy/API)
     fun loadPageData() {
         viewModelScope.launch {
             isLoading = true
+            errorMessage = null
 
-            // Simulasi delay ambil data dari server
-            delay(500)
+            try {
+                val fetchedGames = repository.getGames()
 
-            // DATA DUMMY (Nanti diganti dengan response API)
-            gamesList.clear()
-            gamesList.addAll(
-                listOf(
-                    Game(1, "Mobile Legends", 0, "https://bit.ly/3uH8h2c"),
-                    Game(2, "Valorant", 0, "https://bit.ly/3uH8h2c"),
-                    Game(3, "Genshin Impact", 0, "https://bit.ly/3uH8h2c"),
-                    Game(4, "PUBG Mobile", 0, "https://bit.ly/3uH8h2c"),
-                    Game(5, "Free Fire", 0, "https://bit.ly/3uH8h2c"),
-                    Game(6, "HSR", 0, "https://bit.ly/3uH8h2c")
+                gamesList.clear()
+                gamesList.addAll(fetchedGames)
+
+                if (gamesList.isNotEmpty()) {
+                    selectedGameId = gamesList[0].id
+                }
+
+                vouchersList.clear()
+                vouchersList.addAll(
+                    listOf(
+                        Voucher(1, "Cashback 50%", "50%", "https://dummyimage.com/"),
+                        Voucher(2, "Diskon 20%", "20%", "https://dummyimage.com/")
+                    )
                 )
-            )
 
-            vouchersList.clear()
-            vouchersList.addAll(
-                listOf(
-                    Voucher(1, "Cashback 50%", "50%", "https://dummyimage.com/"),
-                    Voucher(2, "Diskon 20%", "20%", "https://dummyimage.com/")
-                )
-            )
-
-            isLoading = false
+            } catch (e: Exception) {
+                errorMessage = "Gagal memuat data: ${e.localizedMessage}"
+                println("Error loading data: ${e.message}")
+            } finally {
+                isLoading = false
+            }
         }
     }
 
-    // 2. Dipanggil saat tombol "Calculate" ditekan
     fun calculate() {
         val amount = inputAmount.toIntOrNull()
 
-        if (amount != null && amount > 0) {
+        if (amount != null && amount > 0 && selectedGameId != 0) {
             viewModelScope.launch {
-                // Di sini nanti panggil API Backend kamu:
-                // val response = Repository.calculate(selectedGameId, amount)
-                // resultIdr = response.idrValue
+                isLoading = true
+                try {
+                    val selectedGame = gamesList.find { it.id == selectedGameId }
+                    val currencyName = selectedGame?.currency ?: "Currency"
 
-                // --- SIMULASI LOGIKA SEMENTARA ---
-                // Anggap rate berbeda tiap game
-                val rate = when(selectedGameId) {
-                    1 -> 300.0 // MLBB: 1 Diamond = Rp 300
-                    2 -> 150.0 // Valorant: 1 VP = Rp 150
-                    3 -> 250.0 // Genshin: 1 Genesis = Rp 250
-                    else -> 100.0
+                    val calculatedPrice = repository.calculatePrice(
+                        gameId = selectedGameId,
+                        currencyName = currencyName,
+                        amount = amount
+                    )
+
+                    resultIdr = calculatedPrice
+
+                } catch (e: Exception) {
+                    println("Error calculating: ${e.message}")
+                    resultIdr = 0.0
+                } finally {
+                    isLoading = false
                 }
-
-                resultIdr = amount * rate
             }
         } else {
-            // Reset jika input invalid
             resultIdr = 0.0
         }
     }

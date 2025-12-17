@@ -5,8 +5,6 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitClient {
-    // Gunakan 10.0.2.2 jika pakai Emulator Android Studio
-    // Gunakan IP Laptop (misal 192.168.1.x) jika pakai HP fisik
     private const val BASE_URL = "http://10.0.2.2:3000/"
 
     val instance: CurrencyApiService by lazy {
