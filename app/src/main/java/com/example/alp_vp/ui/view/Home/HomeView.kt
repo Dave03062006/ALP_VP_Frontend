@@ -33,6 +33,7 @@ fun HomeView() {
             PointsCard()
             Spacer(modifier = Modifier.height(16.dp))
             GameSelector()
+            //CurrencyCalculatorView()
             Spacer(modifier = Modifier.height(24.dp))
             Text(
                 text = "All Games",
