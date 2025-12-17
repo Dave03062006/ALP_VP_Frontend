@@ -29,9 +29,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun PointsCard() {
+fun PointsCard(points: Int = 0, onShopClick: () -> Unit) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth().height(100.dp),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = Color(0xFFFFE4B5))
     ) {
@@ -59,14 +59,14 @@ fun PointsCard() {
                 }
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "0",
+                    text = "$points",
                     fontSize = 32.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color(0xFF8B4513)
                 )
             }
             Button(
-                onClick = { /* TODO */ },
+                onClick = onShopClick,
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF8C00)),
                 shape = RoundedCornerShape(12.dp)
             ) {
@@ -85,5 +85,5 @@ fun PointsCard() {
 @Composable
 @Preview(showBackground = true)
 fun PreviewCard() {
-    PointsCard()
+//    PointsCard()
 }

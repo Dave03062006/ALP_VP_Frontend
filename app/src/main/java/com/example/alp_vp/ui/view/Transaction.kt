@@ -1,7 +1,5 @@
 package com.example.alp_vp.ui.view
 
-import android.app.Dialog
-import android.widget.Button
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -16,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Favorite
@@ -43,31 +40,52 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ModifierLocalBeyondBoundsLayout
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import org.w3c.dom.Text
+import com.example.alp_vp.data.dto.transaction.CreateTransactionRequest
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TransactionDialog(
+    profileId: Int,
     onDismiss: () -> Unit,
-    onConfirm: () -> Unit
+    onConfirm: (CreateTransactionRequest) -> Unit
 ){
-    var selectedGame by remember { mutableStateOf("Valorant") }
-    var selectedSpendType by remember { mutableStateOf("Single") }
-    var selectedEvent by remember { mutableStateOf("None") }
+    var selectedGameId by remember { mutableStateOf(1) }
+    var selectedTransactionTypeId by remember { mutableStateOf(1) }
+    var selectedEventId by remember { mutableStateOf<Int?>(null) }
     var amount by remember { mutableStateOf("") }
-    var isAutoMode by remember { mutableStateOf(true) }
-    var manualCost by remember { mutableStateOf("") }
+    var description by remember { mutableStateOf("") }
 
     var gameExpanded by remember { mutableStateOf(false) }
     var spendExpanded by remember { mutableStateOf(false) }
     var eventExpanded by remember { mutableStateOf(false) }
+
+    val games = listOf(
+        "Valorant" to 1,
+        "Genshin Impact" to 2,
+        "Honkai Star Rail" to 3,
+        "League of Legends" to 4
+    )
+    val transactionTypes = listOf(
+        "Single Purchase" to 1,
+        "Bundle" to 2,
+        "Discount" to 3
+    )
+    val events = listOf(
+        "None" to null,
+        "Battle Pass" to 1,
+        "Special Event" to 2,
+        "Season Sale" to 3
+    )
+
+    var selectedGameName by remember { mutableStateOf(games[0].first) }
+    var selectedTypeName by remember { mutableStateOf(transactionTypes[0].first) }
+    var selectedEventName by remember { mutableStateOf(events[0].first) }
 
     Dialog(
         onDismissRequest = onDismiss,
@@ -110,6 +128,8 @@ fun TransactionDialog(
                         color = Color(0xFF6B4FA0)
                     )
                     Spacer(modifier = Modifier.height(16.dp))
+
+                    // Game Selector
                     Text("Select Game", fontSize = 14.sp, fontWeight = FontWeight.Medium)
                     Spacer(modifier = Modifier.height(8.dp))
                     ExposedDropdownMenuBox(
@@ -117,7 +137,7 @@ fun TransactionDialog(
                         onExpandedChange = { gameExpanded = !gameExpanded}
                     ) {
                         OutlinedTextField(
-                            value = selectedGame,
+                            value = selectedGameName,
                             onValueChange = {},
                             readOnly = true,
                             leadingIcon = {
@@ -144,11 +164,12 @@ fun TransactionDialog(
                             expanded = gameExpanded,
                             onDismissRequest = {gameExpanded = false}
                         ) {
-                            listOf("Valorant", "Genshin Impact", "Honkai Star Rail", "League of Legends", "Apex Legends", "Roblox").forEach { game ->
+                            games.forEach { (name, id) ->
                                 DropdownMenuItem(
-                                    text = { Text(game) },
+                                    text = { Text(name) },
                                     onClick = {
-                                        selectedGame = game
+                                        selectedGameName = name
+                                        selectedGameId = id
                                         gameExpanded = false
                                     }
                                 )
@@ -156,6 +177,8 @@ fun TransactionDialog(
                         }
                     }
                     Spacer(modifier = Modifier.height(16.dp))
+
+                    // Transaction Type
                     Text("How did you spend it?", fontSize = 14.sp, fontWeight = FontWeight.Medium)
                     Spacer(modifier = Modifier.height(8.dp))
                     ExposedDropdownMenuBox(
@@ -163,7 +186,7 @@ fun TransactionDialog(
                         onExpandedChange = { spendExpanded = !spendExpanded}
                     ) {
                         OutlinedTextField(
-                            value = selectedSpendType,
+                            value = selectedTypeName,
                             onValueChange = {},
                             readOnly = true,
                             leadingIcon = {
@@ -190,11 +213,12 @@ fun TransactionDialog(
                             expanded = spendExpanded,
                             onDismissRequest = { spendExpanded = false}
                         ) {
-                            listOf("Single", "Bundle", "Discount").forEach { type ->
+                            transactionTypes.forEach { (name, id) ->
                                 DropdownMenuItem(
-                                    text = { Text(type) },
+                                    text = { Text(name) },
                                     onClick = {
-                                        selectedSpendType = type
+                                        selectedTypeName = name
+                                        selectedTransactionTypeId = id
                                         spendExpanded = false
                                     }
                                 )
@@ -202,14 +226,16 @@ fun TransactionDialog(
                         }
                     }
                     Spacer(modifier = Modifier.height(16.dp))
-                    Text("Event / Season / Battle Pass (Optional)", fontSize = 14.sp, fontWeight = FontWeight.Medium)
+
+                    // Event Selector
+                    Text("Event / Season (Optional)", fontSize = 14.sp, fontWeight = FontWeight.Medium)
                     Spacer(modifier = Modifier.height(8.dp))
                     ExposedDropdownMenuBox(
                         expanded = eventExpanded,
                         onExpandedChange = { eventExpanded = !eventExpanded}
                     ) {
                         OutlinedTextField(
-                            value = selectedEvent,
+                            value = selectedEventName,
                             onValueChange = {},
                             readOnly = true,
                             trailingIcon = {
@@ -233,11 +259,12 @@ fun TransactionDialog(
                             expanded = eventExpanded,
                             onDismissRequest = { eventExpanded = false}
                         ) {
-                            listOf("None", "Battle Pass", "Special Event", "Season Sale").forEach { event->
+                            events.forEach { (name, id) ->
                                 DropdownMenuItem(
-                                    text = { Text(event)},
+                                    text = { Text(name)},
                                     onClick = {
-                                        selectedEvent= event
+                                        selectedEventName = name
+                                        selectedEventId = id
                                         eventExpanded = false
                                     }
                                 )
@@ -245,12 +272,14 @@ fun TransactionDialog(
                         }
                     }
                     Spacer(modifier = Modifier.height(16.dp))
-                    Text("VP (Valorant Points) Amount", fontSize = 14.sp, fontWeight = FontWeight.Medium)
+
+                    // Amount Input
+                    Text("Amount Spent (IDR)", fontSize = 14.sp, fontWeight = FontWeight.Medium)
                     Spacer(modifier = Modifier.height(8.dp))
                     OutlinedTextField(
                         value = amount,
                         onValueChange = {amount = it},
-                        placeholder = { Text("Enter Amount")},
+                        placeholder = { Text("Enter amount in IDR")},
                         modifier = Modifier.fillMaxWidth(),
                         colors = OutlinedTextFieldDefaults.colors(
                             unfocusedContainerColor = Color(0xFFF3E8FF),
@@ -261,72 +290,48 @@ fun TransactionDialog(
                         shape = RoundedCornerShape(12.dp)
                     )
                     Spacer(modifier = Modifier.height(16.dp))
-                    Row(
+
+                    // Description (Optional)
+                    Text("Description (Optional)", fontSize = 14.sp, fontWeight = FontWeight.Medium)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    OutlinedTextField(
+                        value = description,
+                        onValueChange = {description = it},
+                        placeholder = { Text("Add notes...")},
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        Button(
-                            onClick = {
-                                isAutoMode = true
-                            },
-                            modifier = Modifier.weight(1f),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = if (isAutoMode) Color(0xFFD946EF) else Color(0xFFF3E8FF),
-                                contentColor = if (isAutoMode) Color.White else Color(0xFF6B4FA0)
-                            ),
-                            shape = RoundedCornerShape(12.dp)
-                        ){
-                            Icon(Icons.Default.AccountBox, contentDescription = null)
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Text("Auto")
-                        }
-                        Button(
-                            onClick = { isAutoMode = false},
-                            modifier = Modifier.weight(1f),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = if (!isAutoMode) Color(0xFFD946EF) else Color(0xFFF3E8FF),
-                                contentColor = if (!isAutoMode) Color.White else Color(0xFF6B4FA0)
-                            ),
-                            shape = RoundedCornerShape(12.dp)
-                        ) {
-                            Text("Manual")
-                        }
-                    }
-                    Spacer(modifier = Modifier.height(16.dp))
-                    if(!isAutoMode){
-                        Text("Enter IDR Amount", fontSize = 14.sp, fontWeight = FontWeight.Medium)
-                        Spacer(modifier = Modifier.height(8.dp))
-                        OutlinedTextField(
-                            value = manualCost,
-                            onValueChange = {manualCost = it},
-                            placeholder = { Text("Enter Amount")},
-                            modifier = Modifier.fillMaxWidth(),
-                            colors = OutlinedTextFieldDefaults.colors(
-                                unfocusedContainerColor = Color(0xFFF3E8FF),
-                                focusedContainerColor = Color(0xFFF3E8FF),
-                                unfocusedBorderColor = Color.Transparent,
-                                focusedBorderColor = Color.Transparent
-                            ),
-                            shape = RoundedCornerShape(12.dp)
-                        )
-                    }
-                    Text("Calculated Cost", fontSize = 14.sp, fontWeight = FontWeight.Medium)
-                    Text(
-                        "Rp 0.00",
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFF6B4FA0)
+                        colors = OutlinedTextFieldDefaults.colors(
+                            unfocusedContainerColor = Color(0xFFF3E8FF),
+                            focusedContainerColor = Color(0xFFF3E8FF),
+                            unfocusedBorderColor = Color.Transparent,
+                            focusedBorderColor = Color.Transparent
+                        ),
+                        shape = RoundedCornerShape(12.dp)
                     )
                     Spacer(modifier = Modifier.height(24.dp))
+
+                    // Submit Button
                     Button(
-                        onClick = onConfirm,
+                        onClick = {
+                            val amountDouble = amount.toDoubleOrNull()
+                            if (amountDouble != null && amountDouble > 0) {
+                                val request = CreateTransactionRequest(
+                                    gameId = selectedGameId,
+                                    transactionTypeId = selectedTransactionTypeId,
+                                    amount = amountDouble,
+                                    eventId = selectedEventId,
+                                    description = description.ifBlank { null }
+                                )
+                                onConfirm(request)
+                            }
+                        },
                         modifier = Modifier.fillMaxWidth(),
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD946EF)),
-                        shape = RoundedCornerShape(12.dp)
+                        shape = RoundedCornerShape(12.dp),
+                        enabled = amount.toDoubleOrNull() != null && amount.toDoubleOrNull()!! > 0
                     ) {
-                        Icon(imageVector = Icons.Default.Add, contentDescription = null)
+                        Icon(Icons.Default.Add, contentDescription = null)
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("Add Purchase", fontSize = 16.sp)
+                        Text("Add Transaction", fontSize = 16.sp)
                     }
                 }
             }
@@ -339,6 +344,7 @@ fun TransactionDialog(
 fun TransactionDialogPreview() {
     TransactionDialog(
         onDismiss = {},
-        onConfirm = {}
+        onConfirm = {},
+        profileId = 1
     )
 }
