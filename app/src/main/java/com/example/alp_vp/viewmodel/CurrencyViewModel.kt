@@ -38,10 +38,8 @@ class CurrencyViewModel : ViewModel() {
             errorMessage = null
 
             try {
-                // Panggil Repository (return WebResponse)
                 val response = repository.getAllGames()
 
-                // LOGIC: Buka bungkus .data di sini
                 val fetchedGames = response.data
 
                 gamesList.clear()
@@ -52,7 +50,6 @@ class CurrencyViewModel : ViewModel() {
                     fetchExchangeRate(selectedGameId)
                 }
 
-                // Data Dummy Voucher
                 vouchersList.clear()
                 vouchersList.addAll(
                     listOf(
@@ -73,10 +70,8 @@ class CurrencyViewModel : ViewModel() {
     fun fetchExchangeRate(gameId: Int) {
         viewModelScope.launch {
             try {
-                // Panggil Repository (return WebResponse)
                 val response = repository.getCurrencyRates(gameId)
 
-                // LOGIC: Buka bungkus .data di sini
                 val rates = response.data
 
                 if (rates.isNotEmpty()) {
@@ -100,17 +95,14 @@ class CurrencyViewModel : ViewModel() {
                     val selectedGame = gamesList.find { it.id == selectedGameId }
                     val currencyName = selectedGame?.currency ?: "Currency"
 
-                    // LOGIC: Buat Request Object di sini
                     val request = ConvertCurrencyRequest(
                         gameId = selectedGameId,
                         currencyName = currencyName,
                         amount = amount
                     )
 
-                    // Kirim Request Object ke Repository
                     val response = repository.convertCurrency(request)
 
-                    // LOGIC: Ambil hasil dari response.data
                     resultIdr = response.data.idrValue
 
                 } catch (e: Exception) {

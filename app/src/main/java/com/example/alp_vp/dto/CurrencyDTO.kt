@@ -1,4 +1,4 @@
-package com.example.alp_vp.model
+package com.example.alp_vp.dto
 
 import com.google.gson.annotations.SerializedName
 
@@ -6,7 +6,8 @@ data class GameResponse(
     val id: Int,
     val name: String,
     val iconUrl: String?,
-    val isActive: Boolean
+    val currency: String? = "Currency",
+    val isActive: Boolean? = true
 )
 
 data class ConvertCurrencyRequest(
