@@ -4,6 +4,5 @@ data class CreateTransactionRequest(
     val gameId: Int,
     val transactionTypeId: Int,
     val amount: Double,
-    val eventId: Int? = null,
-    val description: String? = null
+    val eventId: Int? = null
 )

@@ -95,13 +95,18 @@ class HomeViewModel(
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
             try {
-                // Add profileId to the request
-                transactionRepository.createTransaction(currentProfileId, request   )
-                loadData() // Reload data after creating transaction
+                println("DEBUG: Creating transaction...")
+                val createdTransaction = transactionRepository.createTransaction(currentProfileId, request)
+                println("DEBUG: Transaction created successfully: ${createdTransaction.id}")
+
+                // Reload data after creating transaction
+                loadData()
             } catch (e: Exception) {
+                println("ERROR: Failed to create transaction - ${e.message}")
+                e.printStackTrace()
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
-                    errorMessage = e.message ?: "Failed to create transaction"
+                    errorMessage = "Failed to create transaction: ${e.message}"
                 )
             }
         }

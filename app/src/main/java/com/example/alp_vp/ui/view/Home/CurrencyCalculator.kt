@@ -16,8 +16,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -30,8 +28,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
 
 // Import DTO, Repository, dan Network yang sudah dibuat
-import com.example.alp_vp.model.GameResponse
 import com.example.alp_vp.container.RetrofitClient
+import com.example.alp_vp.dto.GameResponse
+import com.example.alp_vp.dto.CurrencyRateResponse
 import com.example.alp_vp.repository.CurrencyRepository
 
 class CalculatorViewModel : ViewModel() {
@@ -55,10 +54,12 @@ class CalculatorViewModel : ViewModel() {
         viewModelScope.launch {
             isLoading = true
             try {
-                val games = repository.getGames()
+                val resp = repository.getAllGames()
+                val games = resp.data
                 gamesList.clear()
                 gamesList.addAll(games)
             } catch (e: Exception) {
+                e.printStackTrace()
                 errorMessage = "Gagal ambil game: ${e.message}"
             } finally {
                 isLoading = false
@@ -70,7 +71,8 @@ class CalculatorViewModel : ViewModel() {
         viewModelScope.launch {
             isLoading = true
             try {
-                val rates = repository.getRates(gameId)
+                val resp = repository.getCurrencyRates(gameId)
+                val rates: List<CurrencyRateResponse> = resp.data
 
                 if (rates.isNotEmpty()) {
                     currentRate = rates[0].toIDR
@@ -78,6 +80,9 @@ class CalculatorViewModel : ViewModel() {
                     currentRate = 0.0
                 }
             } catch (e: Exception) {
+                e.printStackTrace()
+                // keep the exception message for debugging and show a user-friendly message
+                errorMessage = "Gagal ambil rate: ${e.message}"
                 currentRate = 0.0
             } finally {
                 isLoading = false

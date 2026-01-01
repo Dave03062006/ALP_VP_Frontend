@@ -96,23 +96,30 @@ fun TransactionItem(transaction: TransactionResponse) {
         ) {
             Column {
                 Text(
-                    text = "Game ID: ${transaction.gameId}",
+                    text = transaction.game?.name ?: "Game ID: ${transaction.gameId}",
                     fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold
                 )
                 Text(
-                    text = transaction.createdAt.take(10),
+                    text = transaction.purchaseDate.take(10),
                     fontSize = 12.sp,
                     color = Color.Gray
                 )
             }
-            Text(
-                text = "$${String.format("%.2f", transaction.amount)}",
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFFD946EF)
-            )
+            Column(horizontalAlignment = Alignment.End) {
+                Text(
+                    text = "$${String.format("%.2f", transaction.amount)}",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFFD946EF)
+                )
+                Text(
+                    text = "+${transaction.pointsEarned} pts",
+                    fontSize = 12.sp,
+                    color = Color(0xFF10B981),
+                    fontWeight = FontWeight.Medium
+                )
+            }
         }
     }
 }
-

@@ -65,12 +65,17 @@ fun TransactionDialog(
     var spendExpanded by remember { mutableStateOf(false) }
     var eventExpanded by remember { mutableStateOf(false) }
 
+    // Updated to match the seeded games and transaction types
     val games = listOf(
         "Valorant" to 1,
         "Genshin Impact" to 2,
-        "Honkai Star Rail" to 3,
-        "League of Legends" to 4
+        "Mobile Legends" to 3,
+        "Roblox" to 4,
+        "PUBG Mobile" to 5,
+        "Free Fire" to 6,
+        "Honkai: Star Rail" to 7
     )
+    // Updated to match the seeded transaction types
     val transactionTypes = listOf(
         "Single Purchase" to 1,
         "Bundle" to 2,
@@ -318,8 +323,7 @@ fun TransactionDialog(
                                     gameId = selectedGameId,
                                     transactionTypeId = selectedTransactionTypeId,
                                     amount = amountDouble,
-                                    eventId = selectedEventId,
-                                    description = description.ifBlank { null }
+                                    eventId = selectedEventId
                                 )
                                 onConfirm(request)
                             }

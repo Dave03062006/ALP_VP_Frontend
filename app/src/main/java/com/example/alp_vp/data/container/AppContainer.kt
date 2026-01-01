@@ -20,8 +20,8 @@ interface AppContainer {
 class DefaultAppContainer : AppContainer {
 
     // Base URL - Update this to your backend URL
-    private val baseUrl = "http://10.0.2.2:3000/" // For Android Emulator connecting to localhost
-    // For physical device, use: "http://YOUR_IP_ADDRESS:3000/"
+    private val baseUrl = "http://10.0.2.2:3000/api/" // Added /api/ prefix to match backend routes
+    // For physical device, use: "http://YOUR_IP_ADDRESS:3000/api/"
 
     // Logging interceptor for debugging
     private val loggingInterceptor = HttpLoggingInterceptor().apply {
@@ -73,4 +73,3 @@ class DefaultAppContainer : AppContainer {
         ApiItemRepository(apiService)
     }
 }
-
