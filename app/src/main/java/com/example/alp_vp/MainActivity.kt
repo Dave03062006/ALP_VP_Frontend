@@ -22,13 +22,11 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         val app = application as MainApplication
-        val viewModel = GachaViewModel(
-            app.container.gachaRepository
-        )
+        val viewModel = GachaViewModel(app.container.gachaRepository)
 
         setContent {
             ALP_VPTheme {
-                GachaScreen(viewModel)
+                GachaScreen(viewModel = viewModel)
             }
         }
     }

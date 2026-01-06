@@ -7,7 +7,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class AppContainer {
 
-    private val BASE_URL = "http://10.0.2.2:3000/"
+    private val BASE_URL = "http://192.168.56.1:3000/"
 
     private val retrofit: Retrofit = Retrofit.Builder()
         .baseUrl(BASE_URL)
