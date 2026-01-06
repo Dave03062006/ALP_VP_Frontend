@@ -25,6 +25,7 @@ sealed class Screen(val route: String) {
     object History : Screen("history")
     object Profile : Screen("profile")
     object Shop : Screen("shop")
+    object PurchaseHistory : Screen("purchase_history")
 }
 
 @Composable

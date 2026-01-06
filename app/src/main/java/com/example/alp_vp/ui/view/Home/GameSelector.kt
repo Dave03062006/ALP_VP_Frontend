@@ -1,5 +1,6 @@
 package com.example.alp_vp.ui.view.Home
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -8,6 +9,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.Transparent
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.alp_vp.data.dto.GameResponse
@@ -51,9 +53,12 @@ fun GameSelector(
                     modifier = Modifier
                         .fillMaxWidth()
                         .menuAnchor(),
+                    shape = RoundedCornerShape(12.dp),
                     colors = OutlinedTextFieldDefaults.colors(
                         unfocusedContainerColor = Color.White,
-                        focusedContainerColor = Color.White
+                        focusedContainerColor = Color.White,
+                        unfocusedBorderColor = Transparent,
+                        focusedBorderColor = Transparent
                     )
                 )
 

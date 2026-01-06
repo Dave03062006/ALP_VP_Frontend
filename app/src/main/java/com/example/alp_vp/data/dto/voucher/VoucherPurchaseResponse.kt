@@ -4,7 +4,10 @@ data class VoucherPurchaseResponse(
     val purchaseId: Int,
     val voucherId: Int,
     val profileId: String,
-    val code: String?,       
-    val used: Boolean,
+    val voucherName: String = "",
+    val voucherValue: Double = 0.0,
+    val pointsSpent: Int,
+    val code: String?,
+    val isUsed: Boolean,
     val purchasedAt: String
 )

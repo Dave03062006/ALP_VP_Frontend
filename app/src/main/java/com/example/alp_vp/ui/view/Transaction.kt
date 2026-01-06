@@ -33,9 +33,11 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -47,13 +49,16 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.example.alp_vp.data.dto.transaction.CreateTransactionRequest
+import com.example.alp_vp.data.repository.EventRepository
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TransactionDialog(
     profileId: Int,
     onDismiss: () -> Unit,
-    onConfirm: (CreateTransactionRequest) -> Unit
+    onConfirm: (CreateTransactionRequest) -> Unit,
+    eventRepository: EventRepository
 ){
     var selectedGameId by remember { mutableStateOf(1) }
     var selectedTransactionTypeId by remember { mutableStateOf(1) }
@@ -65,6 +70,11 @@ fun TransactionDialog(
     var spendExpanded by remember { mutableStateOf(false) }
     var eventExpanded by remember { mutableStateOf(false) }
 
+    // Dynamic events list based on selected game
+    var availableEvents by remember { mutableStateOf<List<Pair<String, Int?>>>(listOf("None" to null)) }
+    var isLoadingEvents by remember { mutableStateOf(false) }
+    val coroutineScope = rememberCoroutineScope()
+
     // Updated to match the seeded games and transaction types
     val games = listOf(
         "Valorant" to 1,
@@ -75,22 +85,32 @@ fun TransactionDialog(
         "Free Fire" to 6,
         "Honkai: Star Rail" to 7
     )
-    // Updated to match the seeded transaction types
     val transactionTypes = listOf(
         "Single Purchase" to 1,
         "Bundle" to 2,
         "Discount" to 3
     )
-    val events = listOf(
-        "None" to null,
-        "Battle Pass" to 1,
-        "Special Event" to 2,
-        "Season Sale" to 3
-    )
 
     var selectedGameName by remember { mutableStateOf(games[0].first) }
     var selectedTypeName by remember { mutableStateOf(transactionTypes[0].first) }
-    var selectedEventName by remember { mutableStateOf(events[0].first) }
+    var selectedEventName by remember { mutableStateOf("None") }
+
+    // Load events when game changes
+    LaunchedEffect(selectedGameId) {
+        isLoadingEvents = true
+        try {
+            val events = eventRepository.getEventsByGame(selectedGameId)
+            availableEvents = listOf("None" to null) + events.map { it.eventName to it.id }
+            // Reset event selection to "None" when game changes
+            selectedEventName = "None"
+            selectedEventId = null
+        } catch (e: Exception) {
+            println("Error loading events: ${e.message}")
+            availableEvents = listOf("None" to null)
+        } finally {
+            isLoadingEvents = false
+        }
+    }
 
     Dialog(
         onDismissRequest = onDismiss,
@@ -232,7 +252,7 @@ fun TransactionDialog(
                     }
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // Event Selector
+                    // Event Selector - Now loads dynamically based on selected game
                     Text("Event / Season (Optional)", fontSize = 14.sp, fontWeight = FontWeight.Medium)
                     Spacer(modifier = Modifier.height(8.dp))
                     ExposedDropdownMenuBox(
@@ -240,9 +260,10 @@ fun TransactionDialog(
                         onExpandedChange = { eventExpanded = !eventExpanded}
                     ) {
                         OutlinedTextField(
-                            value = selectedEventName,
+                            value = if (isLoadingEvents) "Loading..." else selectedEventName,
                             onValueChange = {},
                             readOnly = true,
+                            enabled = !isLoadingEvents,
                             trailingIcon = {
                                 Icon(
                                     if(eventExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
@@ -256,7 +277,9 @@ fun TransactionDialog(
                                 unfocusedContainerColor = Color(0xFFF3E8FF),
                                 focusedContainerColor = Color(0xFFF3E8FF),
                                 unfocusedBorderColor = Color.Transparent,
-                                focusedBorderColor = Color.Transparent
+                                focusedBorderColor = Color.Transparent,
+                                disabledContainerColor = Color(0xFFF3E8FF),
+                                disabledBorderColor = Color.Transparent
                             ),
                             shape = RoundedCornerShape(12.dp)
                         )
@@ -264,7 +287,7 @@ fun TransactionDialog(
                             expanded = eventExpanded,
                             onDismissRequest = { eventExpanded = false}
                         ) {
-                            events.forEach { (name, id) ->
+                            availableEvents.forEach { (name, id) ->
                                 DropdownMenuItem(
                                     text = { Text(name)},
                                     onClick = {
@@ -346,9 +369,6 @@ fun TransactionDialog(
 @Composable
 @Preview(showBackground = true, showSystemUi = true)
 fun TransactionDialogPreview() {
-    TransactionDialog(
-        onDismiss = {},
-        onConfirm = {},
-        profileId = 1
-    )
+    // Preview won't work without providing eventRepository
+    // TransactionDialog(onDismiss = {}, onConfirm = {}, profileId = 1, eventRepository = ...)
 }

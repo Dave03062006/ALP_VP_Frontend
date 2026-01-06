@@ -12,6 +12,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -19,6 +20,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.alp_vp.VPApplication
 import com.example.alp_vp.ui.view.TransactionDialog
 import com.example.alp_vp.ui.viewmodel.HomeViewModel
 import com.example.alp_vp.ui.routes.Screen
@@ -30,6 +32,8 @@ fun HomeView(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var showTransactionDialog by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    val application = context.applicationContext as VPApplication
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -74,12 +78,12 @@ fun HomeView(
             GameSelector(
                 games = uiState.games,
                 selectedGame = uiState.selectedGame,
-                onGameSelected = { /* TODO: Handle game selection */ }
+                onGameSelected = { game -> viewModel.selectGame(game) }
             )
             //CurrencyCalculatorView()
             Spacer(modifier = Modifier.height(24.dp))
             Text(
-                text = "All Games",
+                text = uiState.selectedGame?.name ?: "All Games",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.align(Alignment.CenterHorizontally)
@@ -95,7 +99,7 @@ fun HomeView(
             Spacer(modifier = Modifier.height(16.dp))
             RecentTransactionsCard(transactions = uiState.transactions)
             Spacer(modifier = Modifier.height(16.dp))
-            SpendingByGameCard()
+            SpendingByGameCard(gameSpendingRanking = uiState.gameSpendingRanking)
             Spacer(modifier = Modifier.height(16.dp))
             StartTrackingCard(onAddClick = { showTransactionDialog = true })
         }
@@ -121,6 +125,7 @@ fun HomeView(
     if(showTransactionDialog){
         TransactionDialog(
             profileId = 1, // Using hardcoded profileId of 1 as per ViewModel
+            eventRepository = application.container.eventRepository,
             onDismiss = { showTransactionDialog = false },
             onConfirm = { transactionRequest ->
                 viewModel.createTransaction(transactionRequest)

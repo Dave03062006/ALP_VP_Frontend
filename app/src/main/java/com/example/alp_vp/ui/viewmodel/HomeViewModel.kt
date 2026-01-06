@@ -23,9 +23,18 @@ data class HomeUiState(
     val selectedGame: GameResponse? = null,
     val games: List<GameResponse> = emptyList(),
     val transactions: List<TransactionResponse> = emptyList(),
+    val allTransactions: List<TransactionResponse> = emptyList(), // Store all transactions for ranking
     val statistics: TransactionStatisticsResponse? = null,
+    val gameSpendingRanking: List<GameSpending> = emptyList(), // Add ranking
     val isLoading: Boolean = false,
     val errorMessage: String? = null
+)
+
+data class GameSpending(
+    val gameId: Int,
+    val gameName: String,
+    val totalSpent: Double,
+    val transactionCount: Int
 )
 
 class HomeViewModel(
@@ -59,24 +68,28 @@ class HomeViewModel(
                 val games = gameRepository.getGames(onlyActive = true)
                 println("DEBUG: Games loaded - Count: ${games.size}")
 
-                // Load transactions
-                println("DEBUG: Fetching transactions...")
-                val transactions = transactionRepository.getTransactions(
-                    profileId = currentProfileId,
-                    limit = 10
+                // Load ALL transactions (without limit) for accurate ranking
+                println("DEBUG: Fetching all transactions...")
+                val allTransactions = transactionRepository.getTransactions(
+                    profileId = currentProfileId
                 )
-                println("DEBUG: Transactions loaded - Count: ${transactions.size}")
+                println("DEBUG: All transactions loaded - Count: ${allTransactions.size}")
 
-                // Load statistics
-                println("DEBUG: Fetching statistics...")
-                val statistics = transactionRepository.getTransactionStatistics(currentProfileId)
-                println("DEBUG: Statistics loaded - Total Spent: ${statistics.totalSpent}")
+                // Calculate game spending ranking
+                val gameSpendingRanking = calculateGameSpendingRanking(allTransactions)
+                println("DEBUG: Game spending ranking calculated - ${gameSpendingRanking.size} games")
+
+                // Apply filter based on selected game
+                val filteredTransactions = filterTransactions(allTransactions, _uiState.value.selectedGame?.id)
+                val filteredStatistics = calculateStatistics(filteredTransactions)
 
                 _uiState.value = _uiState.value.copy(
                     userPoints = profile.points,
                     games = games,
-                    transactions = transactions,
-                    statistics = statistics,
+                    transactions = filteredTransactions.take(10), // Show recent 10
+                    allTransactions = allTransactions,
+                    statistics = filteredStatistics,
+                    gameSpendingRanking = gameSpendingRanking,
                     isLoading = false
                 )
                 println("DEBUG: All data loaded successfully!")
@@ -89,6 +102,52 @@ class HomeViewModel(
                 )
             }
         }
+    }
+
+    private fun filterTransactions(transactions: List<TransactionResponse>, gameId: Int?): List<TransactionResponse> {
+        return if (gameId != null) {
+            transactions.filter { it.gameId == gameId }
+        } else {
+            transactions
+        }
+    }
+
+    private fun calculateStatistics(transactions: List<TransactionResponse>): TransactionStatisticsResponse {
+        val totalSpent = transactions
+            .filter { it.transactionType?.typeName?.lowercase()?.contains("purchase") == true || it.amount < 0 }
+            .sumOf { kotlin.math.abs(it.amount) }
+
+        val totalEarned = transactions
+            .sumOf { it.pointsEarned.toDouble() }
+
+        return TransactionStatisticsResponse(
+            totalSpent = totalSpent,
+            totalEarned = totalEarned,
+            transactionsCount = transactions.size
+        )
+    }
+
+    private fun calculateGameSpendingRanking(transactions: List<TransactionResponse>): List<GameSpending> {
+        // Group transactions by game
+        val gameGroups = transactions.groupBy { it.gameId }
+
+        // Calculate spending per game
+        val gameSpendingList = gameGroups.map { (gameId, gameTransactions) ->
+            val gameName = gameTransactions.firstOrNull()?.game?.name ?: "Unknown Game"
+            val totalSpent = gameTransactions
+                .filter { it.transactionType?.typeName?.lowercase()?.contains("purchase") == true || it.amount < 0 }
+                .sumOf { kotlin.math.abs(it.amount) }
+
+            GameSpending(
+                gameId = gameId,
+                gameName = gameName,
+                totalSpent = totalSpent,
+                transactionCount = gameTransactions.size
+            )
+        }
+
+        // Sort by total spent (descending) and return
+        return gameSpendingList.sortedByDescending { it.totalSpent }
     }
 
     fun createTransaction(request: CreateTransactionRequest) {
@@ -114,6 +173,15 @@ class HomeViewModel(
 
     fun selectGame(game: GameResponse?) {
         _uiState.value = _uiState.value.copy(selectedGame = game)
+
+        // Re-filter transactions and recalculate statistics
+        val filteredTransactions = filterTransactions(_uiState.value.allTransactions, game?.id)
+        val filteredStatistics = calculateStatistics(filteredTransactions)
+
+        _uiState.value = _uiState.value.copy(
+            transactions = filteredTransactions.take(10),
+            statistics = filteredStatistics
+        )
     }
 
     companion object {

@@ -11,6 +11,7 @@ import com.example.alp_vp.ui.routes.BottomNavigationBar
 import com.example.alp_vp.ui.routes.Screen
 import com.example.alp_vp.ui.view.Home.HomeView
 import com.example.alp_vp.ui.view.Shop.ShopView
+import com.example.alp_vp.ui.view.Shop.PurchaseHistoryView
 
 @Composable
 fun MainScreen() {
@@ -40,7 +41,15 @@ fun MainScreen() {
                 // TODO: ProfileView()
             }
             composable(Screen.Shop.route) {
-                ShopView(onBack = { navController.navigateUp() })
+                ShopView(
+                    onBack = { navController.navigateUp() },
+                    onNavigateToPurchaseHistory = { navController.navigate(Screen.PurchaseHistory.route) }
+                )
+            }
+            composable(Screen.PurchaseHistory.route) {
+                PurchaseHistoryView(
+                    onBack = { navController.navigateUp() }
+                )
             }
         }
     }

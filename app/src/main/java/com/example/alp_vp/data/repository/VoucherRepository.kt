@@ -9,7 +9,7 @@ interface VoucherRepository {
     suspend fun createVoucher(req: VoucherCreateRequest): Voucher
     suspend fun purchaseVoucher(profileId: String, req: VoucherPurchaseRequest): VoucherPurchaseResponse
     suspend fun getVouchersByGame(gameId: Int): List<Voucher>
-    suspend fun getVoucherPurchases(profileId: String): List<Voucher>
+    suspend fun getVoucherPurchases(profileId: String): List<VoucherPurchaseResponse>
     suspend fun getVoucher(id: Int): Voucher
     suspend fun useVoucherPurchase(purchaseId: Int)
 }

@@ -27,22 +27,10 @@ class ApiVoucherRepository(private val service: ApiService) : VoucherRepository 
         throw IOException("Get vouchers failed: ${resp.code()} ${resp.message()}")
     }
 
-    override suspend fun getVoucherPurchases(profileId: String): List<Voucher> {
+    override suspend fun getVoucherPurchases(profileId: String): List<VoucherPurchaseResponse> {
         val resp = service.getVoucherPurchases(profileId)
         if (resp.isSuccessful) {
-            return resp.body()?.map { purchase ->
-                Voucher(
-                    id = purchase.voucherId,
-                    gameId = 0,
-                    voucherName = "",
-                    value = 0.0,
-                    pointsCost = 0,
-                    stock = 0,
-                    code = purchase.code,
-                    isCodeHidden = purchase.code == null,
-                    createdAt = purchase.purchasedAt
-                )
-            } ?: emptyList()
+            return resp.body() ?: emptyList()
         }
         throw IOException("Get voucher purchases failed: ${resp.code()} ${resp.message()}")
     }
