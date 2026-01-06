@@ -12,15 +12,29 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.example.alp_vp.VPApplication
 import com.example.alp_vp.ui.view.TransactionDialog
+import com.example.alp_vp.ui.viewmodel.HomeViewModel
+import com.example.alp_vp.ui.routes.Screen
 
 @Composable
-fun HomeView() {
+fun HomeView(
+    navController: NavController,
+    viewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory)
+) {
+    val uiState by viewModel.uiState.collectAsState()
     var showTransactionDialog by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    val application = context.applicationContext as VPApplication
+
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
@@ -30,12 +44,46 @@ fun HomeView() {
                 .padding(16.dp)
                 .padding(bottom = 80.dp)
         ) {
-            PointsCard()
+            // Show error message if there's an error
+            if (uiState.errorMessage != null) {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color(0xFFFFEBEE))
+                ) {
+                    Text(
+                        text = uiState.errorMessage ?: "",
+                        color = Color(0xFFD32F2F),
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
+            }
+
+            // Show loading indicator
+            if (uiState.isLoading) {
+                LinearProgressIndicator(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp),
+                    color = Color(0xFFD946EF)
+                )
+            }
+
+            PointsCard(
+                points = uiState.userPoints,
+                onShopClick = { navController.navigate(Screen.Shop.route) }
+            )
             Spacer(modifier = Modifier.height(16.dp))
-            GameSelector()
+            GameSelector(
+                games = uiState.games,
+                selectedGame = uiState.selectedGame,
+                onGameSelected = { game -> viewModel.selectGame(game) }
+            )
+            //CurrencyCalculatorView()
             Spacer(modifier = Modifier.height(24.dp))
             Text(
-                text = "All Games",
+                text = uiState.selectedGame?.name ?: "All Games",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.align(Alignment.CenterHorizontally)
@@ -47,18 +95,18 @@ fun HomeView() {
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             )
             Spacer(modifier = Modifier.height(16.dp))
-            StatisticsCard()
+            StatisticsCard(statistics = uiState.statistics)
             Spacer(modifier = Modifier.height(16.dp))
-            RecentTransactionsCard()
+            RecentTransactionsCard(transactions = uiState.transactions)
             Spacer(modifier = Modifier.height(16.dp))
-            SpendingByGameCard()
+            SpendingByGameCard(gameSpendingRanking = uiState.gameSpendingRanking)
             Spacer(modifier = Modifier.height(16.dp))
-            StartTrackingCard()
+            StartTrackingCard(onAddClick = { showTransactionDialog = true })
         }
 
         // Floating Action Button
         FloatingActionButton(
-            onClick = { /* TODO: Show popup */ },
+            onClick = { showTransactionDialog = true },
             containerColor = Color(0xFFD946EF),
             shape = CircleShape,
             modifier = Modifier
@@ -73,17 +121,22 @@ fun HomeView() {
             )
         }
     }
+
     if(showTransactionDialog){
         TransactionDialog(
-            onDismiss = { showTransactionDialog = false},
-            onConfirm = {
+            profileId = 1, // Using hardcoded profileId of 1 as per ViewModel
+            eventRepository = application.container.eventRepository,
+            onDismiss = { showTransactionDialog = false },
+            onConfirm = { transactionRequest ->
+                viewModel.createTransaction(transactionRequest)
                 showTransactionDialog = false
             }
         )
     }
 }
+
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun HomeViewPreview() {
-    HomeView()
+    HomeView(navController = rememberNavController())
 }

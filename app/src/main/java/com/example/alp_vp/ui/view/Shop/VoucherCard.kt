@@ -3,11 +3,11 @@ package com.example.alp_vp.ui.view.Shop
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -29,49 +29,142 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-
+import com.example.alp_vp.data.dto.voucher.Voucher
 
 @Composable
-fun VoucherCard(title: String, subtitle: String, costPoints: Int, rightLabel: String) {
+fun VoucherCard(
+    voucher: Voucher,
+    userPoints: Int,
+    onPurchase: () -> Unit
+) {
+    // Debug logging with null safety
+    try {
+        println("VoucherCard: Rendering voucher")
+        println("VoucherCard: ID=${voucher.id}, Name='${voucher.voucherName}'")
+        println("VoucherCard: value=${voucher.value}, pointsCost=${voucher.pointsCost}, stock=${voucher.stock}")
+    } catch (e: Exception) {
+        println("VoucherCard: Error logging voucher data: ${e.message}")
+    }
+
+    val hasEnoughPoints = userPoints >= voucher.pointsCost
+    val isOutOfStock = voucher.stock == 0
+    val stockText = when {
+        voucher.stock == -1 -> "Unlimited"
+        voucher.stock == 0 -> "Out of Stock"
+        voucher.stock < 10 -> "Only ${voucher.stock} left!"
+        else -> "In Stock"
+    }
+
+    val voucherNameText = voucher.voucherName.takeIf { it.isNotBlank() } ?: "Unknown Voucher"
+    val discountText = "Get $${String.format("%.2f", voucher.value)} discount"
+
     Card(
         modifier = Modifier
-            .fillMaxWidth()
-            .heightIn(min = 88.dp),
-        shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFFFFE4B5)),
-        border = BorderStroke(2.dp, Color(0xFFFFC457))
-    ) {
-        Row(modifier = Modifier
-            .padding(16.dp)
             .fillMaxWidth(),
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = if (isOutOfStock) Color(0xFFE0E0E0) else Color(0xFFFFE4B5)
+        ),
+        border = BorderStroke(
+            2.dp,
+            if (isOutOfStock) Color.Gray else Color(0xFFFFC457)
+        )
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Default.Email, contentDescription = null, tint = Color(0xFF8B4513))
+            // Left side - Voucher info
+            Column(
+                modifier = Modifier.weight(1f)
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(bottom = 6.dp)
+                ) {
+                    Icon(
+                        Icons.Default.Email,
+                        contentDescription = null,
+                        tint = if (isOutOfStock) Color.Gray else Color(0xFF8B4513),
+                        modifier = Modifier.size(20.dp)
+                    )
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text(title, fontWeight = FontWeight.SemiBold)
+                    Text(
+                        text = voucherNameText,
+                        fontWeight = FontWeight.SemiBold,
+                        color = if (isOutOfStock) Color.Gray else Color.Black,
+                        fontSize = 14.sp,
+                        maxLines = 2
+                    )
                 }
-                Spacer(modifier = Modifier.height(6.dp))
-                Text(subtitle, fontSize = 12.sp, color = Color(0xFF6B4FA0))
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Text(
+                    text = discountText,
+                    fontSize = 12.sp,
+                    color = if (isOutOfStock) Color.Gray else Color(0xFF6B4FA0)
+                )
+
                 Spacer(modifier = Modifier.height(8.dp))
+
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Default.Favorite, contentDescription = null, tint = Color(0xFF8B4513), modifier = Modifier.size(16.dp))
+                    Icon(
+                        Icons.Default.Favorite,
+                        contentDescription = null,
+                        tint = if (isOutOfStock) Color.Gray else Color(0xFF8B4513),
+                        modifier = Modifier.size(16.dp)
+                    )
                     Spacer(modifier = Modifier.width(6.dp))
-                    Text("$costPoints Points", fontSize = 12.sp)
+                    Text(
+                        text = "${voucher.pointsCost} Points",
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = if (isOutOfStock) Color.Gray else Color.Black
+                    )
                 }
             }
 
-            Column(horizontalAlignment = Alignment.End, verticalArrangement = Arrangement.SpaceBetween) {
-                Text(rightLabel, color = Color(0xFF0FA97A), fontWeight = FontWeight.Bold)
-                Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.width(12.dp))
+
+            // Right side - Stock and Purchase button
+            Column(
+                horizontalAlignment = Alignment.End
+            ) {
+                Text(
+                    text = stockText,
+                    color = when {
+                        isOutOfStock -> Color.Gray
+                        voucher.stock in 1..9 -> Color(0xFFFF6B6B)
+                        else -> Color(0xFF0FA97A)
+                    },
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 12.sp,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
                 Button(
-                    onClick = { /* TODO: handle purchase */ },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFA46D)),
-                    shape = RoundedCornerShape(8.dp)
+                    onClick = onPurchase,
+                    enabled = hasEnoughPoints && !isOutOfStock,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFFFFA46D),
+                        disabledContainerColor = Color.Gray
+                    ),
+                    shape = RoundedCornerShape(8.dp),
+                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
                 ) {
-                    Text("Purchase", color = Color.White)
+                    Text(
+                        text = when {
+                            isOutOfStock -> "Sold Out"
+                            !hasEnoughPoints -> "Need Points"
+                            else -> "Purchase"
+                        },
+                        color = Color.White,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Medium
+                    )
                 }
             }
         }
@@ -82,9 +175,15 @@ fun VoucherCard(title: String, subtitle: String, costPoints: Int, rightLabel: St
 @Preview(showBackground = true)
 fun VoucherCardPreview() {
     VoucherCard(
-        title = "Steam Voucher",
-        subtitle = "Get a $10 Steam voucher",
-        costPoints = 100,
-        rightLabel = "Available"
+        voucher = Voucher(
+            id = 1,
+            gameId = 1,
+            voucherName = "10% Discount",
+            value = 10.0,
+            pointsCost = 100,
+            stock = 50
+        ),
+        userPoints = 150,
+        onPurchase = {}
     )
 }
