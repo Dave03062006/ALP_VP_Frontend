@@ -40,7 +40,7 @@ fun GameSelector() {
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
-        border = BorderStroke(1.dp, Color(0xFFE0D4F7))
+        border = BorderStroke(2.dp, Color(0xFFD4B5FF))
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(

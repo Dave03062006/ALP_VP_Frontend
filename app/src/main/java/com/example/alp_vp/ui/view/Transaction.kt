@@ -119,43 +119,78 @@ fun TransactionDialog(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.Black.copy(alpha = 0.5f))
+                .background(Color.Black.copy(alpha = 0.6f))
                 .clickable(onClick = onDismiss),
             contentAlignment = Alignment.Center
         ){
             Card(
                 modifier = Modifier
-                    .fillMaxWidth(0.9f)
+                    .fillMaxWidth(0.92f)
                     .clickable(enabled = false) { },
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White)
+                shape = RoundedCornerShape(20.dp),
+                colors = CardDefaults.cardColors(containerColor = Color(0xFFFFFBFE))
             ) {
                 Column(
-                    modifier = Modifier.padding(20.dp)
+                    modifier = Modifier.padding(24.dp)
                 ) {
+                    // Header with better layout
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(
+                                color = Color(0xFFF5F0FF),
+                                shape = RoundedCornerShape(12.dp)
+                            )
+                            .padding(horizontal = 16.dp, vertical = 12.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalAlignment = Alignment.Top
                     ) {
-                        Text(
-                            "Quick Add Purchase",
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                        IconButton(onClick = onDismiss) {
-                            Icon(imageVector = Icons.Default.Close, contentDescription = null)
+                        Row(
+                            modifier = Modifier.weight(1f),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Add,
+                                contentDescription = null,
+                                tint = Color(0xFFD946EF),
+                                modifier = Modifier.padding(end = 8.dp)
+                            )
+                            Column {
+                                Text(
+                                    "Quick Add Purchase",
+                                    fontSize = 18.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color(0xFF1C1B1F)
+                                )
+                                Spacer(modifier = Modifier.height(2.dp))
+                                Text(
+                                    "Track your in-game purchases and earn points",
+                                    fontSize = 11.sp,
+                                    color = Color(0xFF6B4FA0)
+                                )
+                            }
+                        }
+                        IconButton(
+                            onClick = onDismiss,
+                            modifier = Modifier.padding(start = 4.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Close,
+                                contentDescription = "Close",
+                                tint = Color(0xFF6B4FA0)
+                            )
                         }
                     }
-                    Text(
-                        "Track your gaming expense and earn points",
-                        fontSize = 12.sp,
-                        color = Color(0xFF6B4FA0)
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Spacer(modifier = Modifier.height(24.dp))
 
                     // Game Selector
-                    Text("Select Game", fontSize = 14.sp, fontWeight = FontWeight.Medium)
+                    Text(
+                        "Select Game",
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color(0xFF49454F)
+                    )
                     Spacer(modifier = Modifier.height(8.dp))
                     ExposedDropdownMenuBox(
                         expanded = gameExpanded,
@@ -166,22 +201,27 @@ fun TransactionDialog(
                             onValueChange = {},
                             readOnly = true,
                             leadingIcon = {
-                                Icon(imageVector = Icons.Default.Favorite, contentDescription = null, tint = Color(0xFF9C6FDE))
+                                Icon(
+                                    imageVector = Icons.Default.Favorite,
+                                    contentDescription = null,
+                                    tint = Color(0xFFD946EF)
+                                )
                             },
                             trailingIcon = {
                                 Icon(
                                     if (gameExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-                                    contentDescription = null
+                                    contentDescription = null,
+                                    tint = Color(0xFF6B4FA0)
                                 )
                             },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .menuAnchor(),
                             colors = OutlinedTextFieldDefaults.colors(
-                                unfocusedContainerColor = Color(0xFFF3E8FF),
-                                focusedContainerColor = Color(0xFFF3E8FF),
-                                unfocusedBorderColor = Color.Transparent,
-                                focusedBorderColor = Color.Transparent
+                                unfocusedContainerColor = Color.White,
+                                focusedContainerColor = Color.White,
+                                unfocusedBorderColor = Color(0xFFE0D4F7),
+                                focusedBorderColor = Color(0xFFD946EF)
                             ),
                             shape = RoundedCornerShape(12.dp)
                         )
@@ -204,7 +244,12 @@ fun TransactionDialog(
                     Spacer(modifier = Modifier.height(16.dp))
 
                     // Transaction Type
-                    Text("How did you spend it?", fontSize = 14.sp, fontWeight = FontWeight.Medium)
+                    Text(
+                        "How did you spend it?",
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color(0xFF49454F)
+                    )
                     Spacer(modifier = Modifier.height(8.dp))
                     ExposedDropdownMenuBox(
                         expanded = spendExpanded,
@@ -215,22 +260,27 @@ fun TransactionDialog(
                             onValueChange = {},
                             readOnly = true,
                             leadingIcon = {
-                                Icon(imageVector = Icons.Default.ShoppingCart, contentDescription = null, tint = Color(0xFF9C6FDE))
+                                Icon(
+                                    imageVector = Icons.Default.ShoppingCart,
+                                    contentDescription = null,
+                                    tint = Color(0xFFD946EF)
+                                )
                             },
                             trailingIcon = {
                                 Icon(
                                     if (spendExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-                                    contentDescription = null
+                                    contentDescription = null,
+                                    tint = Color(0xFF6B4FA0)
                                 )
                             },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .menuAnchor(),
                             colors = OutlinedTextFieldDefaults.colors(
-                                unfocusedContainerColor = Color(0xFFF3E8FF),
-                                focusedContainerColor = Color(0xFFF3E8FF),
-                                unfocusedBorderColor = Color.Transparent,
-                                focusedBorderColor = Color.Transparent
+                                unfocusedContainerColor = Color.White,
+                                focusedContainerColor = Color.White,
+                                unfocusedBorderColor = Color(0xFFE0D4F7),
+                                focusedBorderColor = Color(0xFFD946EF)
                             ),
                             shape = RoundedCornerShape(12.dp)
                         )
@@ -252,8 +302,13 @@ fun TransactionDialog(
                     }
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // Event Selector - Now loads dynamically based on selected game
-                    Text("Event / Season (Optional)", fontSize = 14.sp, fontWeight = FontWeight.Medium)
+                    // Event Selector
+                    Text(
+                        "Event / Season (Optional)",
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color(0xFF49454F)
+                    )
                     Spacer(modifier = Modifier.height(8.dp))
                     ExposedDropdownMenuBox(
                         expanded = eventExpanded,
@@ -267,19 +322,20 @@ fun TransactionDialog(
                             trailingIcon = {
                                 Icon(
                                     if(eventExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-                                    contentDescription = null
+                                    contentDescription = null,
+                                    tint = Color(0xFF6B4FA0)
                                 )
                             },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .menuAnchor(),
                             colors = OutlinedTextFieldDefaults.colors(
-                                unfocusedContainerColor = Color(0xFFF3E8FF),
-                                focusedContainerColor = Color(0xFFF3E8FF),
-                                unfocusedBorderColor = Color.Transparent,
-                                focusedBorderColor = Color.Transparent,
-                                disabledContainerColor = Color(0xFFF3E8FF),
-                                disabledBorderColor = Color.Transparent
+                                unfocusedContainerColor = Color.White,
+                                focusedContainerColor = Color.White,
+                                unfocusedBorderColor = Color(0xFFE0D4F7),
+                                focusedBorderColor = Color(0xFFD946EF),
+                                disabledContainerColor = Color(0xFFF5F5F5),
+                                disabledBorderColor = Color(0xFFE0E0E0)
                             ),
                             shape = RoundedCornerShape(12.dp)
                         )
@@ -301,43 +357,121 @@ fun TransactionDialog(
                     }
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // Amount Input
-                    Text("Amount Spent (IDR)", fontSize = 14.sp, fontWeight = FontWeight.Medium)
+                    // Amount Input with highlight
+                    Text(
+                        "Amount Spent (IDR)",
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color(0xFF49454F)
+                    )
                     Spacer(modifier = Modifier.height(8.dp))
                     OutlinedTextField(
                         value = amount,
-                        onValueChange = {amount = it},
-                        placeholder = { Text("Enter amount in IDR")},
+                        onValueChange = {
+                            // Only allow numbers
+                            if (it.isEmpty() || it.all { char -> char.isDigit() }) {
+                                amount = it
+                            }
+                        },
+                        placeholder = {
+                            Text(
+                                "e.g., 50000",
+                                color = Color(0xFF9E9E9E),
+                                fontSize = 14.sp
+                            )
+                        },
+                        prefix = {
+                            Text(
+                                "Rp ",
+                                fontWeight = FontWeight.SemiBold,
+                                color = Color(0xFFD946EF)
+                            )
+                        },
                         modifier = Modifier.fillMaxWidth(),
                         colors = OutlinedTextFieldDefaults.colors(
-                            unfocusedContainerColor = Color(0xFFF3E8FF),
-                            focusedContainerColor = Color(0xFFF3E8FF),
-                            unfocusedBorderColor = Color.Transparent,
-                            focusedBorderColor = Color.Transparent
+                            unfocusedContainerColor = Color(0xFFFFFBFE),
+                            focusedContainerColor = Color(0xFFFFF8FC),
+                            unfocusedBorderColor = Color(0xFFE0D4F7),
+                            focusedBorderColor = Color(0xFFD946EF),
+                            cursorColor = Color(0xFFD946EF)
                         ),
-                        shape = RoundedCornerShape(12.dp)
+                        shape = RoundedCornerShape(12.dp),
+                        singleLine = true
                     )
                     Spacer(modifier = Modifier.height(16.dp))
 
                     // Description (Optional)
-                    Text("Description (Optional)", fontSize = 14.sp, fontWeight = FontWeight.Medium)
+                    Text(
+                        "Description (Optional)",
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color(0xFF49454F)
+                    )
                     Spacer(modifier = Modifier.height(8.dp))
                     OutlinedTextField(
                         value = description,
                         onValueChange = {description = it},
-                        placeholder = { Text("Add notes...")},
-                        modifier = Modifier.fillMaxWidth(),
+                        placeholder = {
+                            Text(
+                                "Add notes about this purchase...",
+                                color = Color(0xFF9E9E9E),
+                                fontSize = 14.sp
+                            )
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(100.dp),
                         colors = OutlinedTextFieldDefaults.colors(
-                            unfocusedContainerColor = Color(0xFFF3E8FF),
-                            focusedContainerColor = Color(0xFFF3E8FF),
-                            unfocusedBorderColor = Color.Transparent,
-                            focusedBorderColor = Color.Transparent
+                            unfocusedContainerColor = Color.White,
+                            focusedContainerColor = Color.White,
+                            unfocusedBorderColor = Color(0xFFE0D4F7),
+                            focusedBorderColor = Color(0xFFD946EF),
+                            cursorColor = Color(0xFFD946EF)
                         ),
-                        shape = RoundedCornerShape(12.dp)
+                        shape = RoundedCornerShape(12.dp),
+                        maxLines = 3
                     )
                     Spacer(modifier = Modifier.height(24.dp))
 
-                    // Submit Button
+                    // Info card about points
+                    if (amount.toDoubleOrNull() != null && amount.toDoubleOrNull()!! > 0) {
+                        val estimatedPoints = (amount.toDoubleOrNull()!! * 0.01).toInt() // Basic calculation
+                        Card(
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = CardDefaults.cardColors(
+                                containerColor = Color(0xFFFFEEFC)
+                            ),
+                            shape = RoundedCornerShape(12.dp)
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(12.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    Icons.Default.Favorite,
+                                    contentDescription = null,
+                                    tint = Color(0xFFD946EF),
+                                    modifier = Modifier.padding(end = 8.dp)
+                                )
+                                Column {
+                                    Text(
+                                        "You'll earn approximately",
+                                        fontSize = 11.sp,
+                                        color = Color(0xFF6B4FA0)
+                                    )
+                                    Text(
+                                        "$estimatedPoints points",
+                                        fontSize = 14.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = Color(0xFFD946EF)
+                                    )
+                                }
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
+
+                    // Submit Button with gradient effect
                     Button(
                         onClick = {
                             val amountDouble = amount.toDoubleOrNull()
@@ -351,14 +485,33 @@ fun TransactionDialog(
                                 onConfirm(request)
                             }
                         },
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD946EF)),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(56.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFFD946EF),
+                            disabledContainerColor = Color(0xFFE0E0E0)
+                        ),
                         shape = RoundedCornerShape(12.dp),
                         enabled = amount.toDoubleOrNull() != null && amount.toDoubleOrNull()!! > 0
                     ) {
-                        Icon(Icons.Default.Add, contentDescription = null)
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text("Add Transaction", fontSize = 16.sp)
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Icon(
+                                Icons.Default.Add,
+                                contentDescription = null,
+                                tint = Color.White
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                "Add Transaction",
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                color = Color.White
+                            )
+                        }
                     }
                 }
             }

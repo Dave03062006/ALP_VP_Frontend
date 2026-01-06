@@ -1,5 +1,6 @@
 package com.example.alp_vp.ui.view.Home
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -33,7 +34,8 @@ fun PointsCard(points: Int = 0, onShopClick: () -> Unit) {
     Card(
         modifier = Modifier.fillMaxWidth().height(100.dp),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFFFFE4B5))
+        colors = CardDefaults.cardColors(containerColor = Color(0xFFFFE4B5)),
+        border = BorderStroke(2.dp, Color(0xFFFFAB35))
     ) {
         Row(
             modifier = Modifier

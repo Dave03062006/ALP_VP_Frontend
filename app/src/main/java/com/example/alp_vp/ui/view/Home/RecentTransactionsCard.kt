@@ -111,7 +111,7 @@ fun TransactionItem(transaction: TransactionResponse) {
                     text = "$${String.format("%.2f", transaction.amount)}",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFFD946EF)
+                    color = Color.Black
                 )
                 Text(
                     text = "+${transaction.pointsEarned} pts",

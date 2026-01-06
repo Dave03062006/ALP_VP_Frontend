@@ -5,6 +5,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -100,27 +102,56 @@ fun ShopView(
                 .fillMaxSize()
                 .padding(16.dp)
                 .padding(bottom = 96.dp)
+                .verticalScroll(rememberScrollState()) // Make the column scrollable
         ) {
+            Spacer(modifier = Modifier.height(8.dp))
+
             // Header
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 20.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Column {
+                Column(
+                    modifier = Modifier.weight(1f).padding(end = 12.dp)
+                ) {
                     Text("Game Voucher Shop", fontWeight = FontWeight.SemiBold, fontSize = 20.sp)
+                    Spacer(modifier = Modifier.height(4.dp))
                     Text("Spend points on discount vouchers", fontSize = 12.sp, color = Color(0xFF6B4FA0))
                 }
 
-                OutlinedButton(
-                    onClick = onBack,
-                    shape = RoundedCornerShape(12.dp),
-                    border = BorderStroke(1.dp, Color(0xFF9C6FDE)),
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFF9C6FDE))
-                ) {
-                    Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
-                    Spacer(modifier = Modifier.width(6.dp))
-                    Text("Back")
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    // My Vouchers Button - Smaller size
+                    Button(
+                        onClick = onNavigateToPurchaseHistory,
+                        shape = RoundedCornerShape(12.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFFD946EF)
+                        ),
+                        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Email,
+                            contentDescription = "My Vouchers",
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text("Vouchers", fontSize = 12.sp)
+                    }
+
+                    OutlinedButton(
+                        onClick = onBack,
+                        shape = RoundedCornerShape(12.dp),
+                        border = BorderStroke(1.dp, Color(0xFF9C6FDE)),
+                        colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFF9C6FDE)),
+                        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp)
+                    ) {
+                        Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back", modifier = Modifier.size(16.dp))
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text("Back", fontSize = 12.sp)
+                    }
                 }
             }
 
@@ -246,9 +277,20 @@ fun ShopView(
                         )
                     }
                 }
-            } else {
+            } else if (uiState.vouchers.isNotEmpty()) {
+                // Debug: Show voucher count
+                Text(
+                    text = "Found ${uiState.vouchers.size} vouchers",
+                    fontSize = 12.sp,
+                    color = Color.Gray,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     uiState.vouchers.forEach { voucher ->
+                        // Debug: Log voucher data
+                        println("Rendering voucher: ${voucher.voucherName}, cost: ${voucher.pointsCost}, stock: ${voucher.stock}")
+
                         VoucherCard(
                             voucher = voucher,
                             userPoints = userPoints,

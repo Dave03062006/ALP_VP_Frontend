@@ -2,6 +2,9 @@
 package com.example.alp_vp.data.service
 
 import com.example.alp_vp.data.dto.*
+import com.example.alp_vp.data.dto.auth.AuthResponse
+import com.example.alp_vp.data.dto.auth.LoginRequest
+import com.example.alp_vp.data.dto.auth.RegisterRequest
 import com.example.alp_vp.data.dto.item.CreateItemRequest
 import com.example.alp_vp.data.dto.item.InventoryItemResponse
 import com.example.alp_vp.data.dto.item.ItemResponse
@@ -17,13 +20,14 @@ import retrofit2.http.*
 
 interface ApiService {
 
+    // Authentication
+    @POST("auth/register")
+    suspend fun register(@Body body: RegisterRequest): Response<AuthResponse>
+
+    @POST("auth/login")
+    suspend fun login(@Body body: LoginRequest): Response<AuthResponse>
+
     // Profiles
-    @POST("profiles/register")
-    suspend fun register(@Body body: RegisterRequest): Response<ProfileResponse>
-
-    @POST("profiles/login")
-    suspend fun login(@Body body: LoginRequest): Response<LoginResponse>
-
     @GET("profiles/leaderboard")
     suspend fun leaderboard(@Query("limit") limit: Int? = 10): Response<List<ProfileResponse>>
 

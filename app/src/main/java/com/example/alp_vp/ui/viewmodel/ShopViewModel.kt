@@ -9,6 +9,7 @@ import com.example.alp_vp.VPApplication
 import com.example.alp_vp.data.dto.*
 import com.example.alp_vp.data.dto.voucher.Voucher
 import com.example.alp_vp.data.dto.voucher.VoucherPurchaseRequest
+import com.example.alp_vp.data.local.SessionManager
 import com.example.alp_vp.data.repository.VoucherRepository
 import com.example.alp_vp.data.repository.GameRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,13 +28,15 @@ data class ShopUiState(
 
 class ShopViewModel(
     private val voucherRepository: VoucherRepository,
-    private val gameRepository: GameRepository
+    private val gameRepository: GameRepository,
+    private val sessionManager: SessionManager
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ShopUiState())
     val uiState: StateFlow<ShopUiState> = _uiState.asStateFlow()
 
-    private val currentProfileId = "1" // Hardcoded for now
+    private val currentProfileId: String
+        get() = sessionManager.getUserId().toString()
 
     init {
         loadGames()
@@ -116,10 +119,10 @@ class ShopViewModel(
                 val application = (this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as VPApplication)
                 ShopViewModel(
                     voucherRepository = application.container.voucherRepository,
-                    gameRepository = application.container.gameRepository
+                    gameRepository = application.container.gameRepository,
+                    sessionManager = application.container.sessionManager
                 )
             }
         }
     }
 }
-

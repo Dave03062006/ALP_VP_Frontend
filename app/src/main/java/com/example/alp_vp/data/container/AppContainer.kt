@@ -1,5 +1,7 @@
 package com.example.alp_vp.data.container
 
+import android.content.Context
+import com.example.alp_vp.data.local.SessionManager
 import com.example.alp_vp.data.repository.*
 import com.example.alp_vp.data.service.ApiService
 import okhttp3.OkHttpClient
@@ -9,6 +11,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 interface AppContainer {
+    val sessionManager: SessionManager
+    val authRepository: AuthRepository
     val profileRepository: ProfileRepository
     val voucherRepository: VoucherRepository
     val gameRepository: GameRepository
@@ -17,11 +21,16 @@ interface AppContainer {
     val itemRepository: ItemRepository
 }
 
-class DefaultAppContainer : AppContainer {
+class DefaultAppContainer(private val context: Context) : AppContainer {
 
     // Base URL - Update this to your backend URL
     private val baseUrl = "http://10.0.2.2:3000/api/" // Added /api/ prefix to match backend routes
     // For physical device, use: "http://YOUR_IP_ADDRESS:3000/api/"
+
+    // Session Manager
+    override val sessionManager: SessionManager by lazy {
+        SessionManager(context)
+    }
 
     // Logging interceptor for debugging
     private val loggingInterceptor = HttpLoggingInterceptor().apply {
@@ -49,6 +58,10 @@ class DefaultAppContainer : AppContainer {
     }
 
     // Repositories
+    override val authRepository: AuthRepository by lazy {
+        ApiAuthRepository(apiService)
+    }
+
     override val profileRepository: ProfileRepository by lazy {
         ApiProfileRepository(apiService)
     }

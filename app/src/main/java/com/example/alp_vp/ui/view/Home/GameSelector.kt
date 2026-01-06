@@ -1,5 +1,6 @@
 package com.example.alp_vp.ui.view.Home
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -26,9 +27,12 @@ fun GameSelector(
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFFE9D5FF))
+        colors = CardDefaults.cardColors(containerColor = Color(0xFFE9D5FF)),
+        border = BorderStroke(2.dp, Color(0xFFa75ecc))
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(modifier = Modifier
+            .padding(16.dp)
+            .padding(bottom = 8.dp)) {
             Text(
                 text = "Select Game",
                 fontSize = 14.sp,
@@ -87,4 +91,3 @@ fun GameSelector(
         }
     }
 }
-

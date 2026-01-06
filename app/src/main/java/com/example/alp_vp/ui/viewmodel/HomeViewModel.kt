@@ -6,10 +6,11 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.alp_vp.VPApplication
-import com.example.alp_vp.data.dto.*
+import com.example.alp_vp.data.dto.GameResponse
 import com.example.alp_vp.data.dto.transaction.CreateTransactionRequest
 import com.example.alp_vp.data.dto.transaction.TransactionResponse
 import com.example.alp_vp.data.dto.transaction.TransactionStatisticsResponse
+import com.example.alp_vp.data.local.SessionManager
 import com.example.alp_vp.data.repository.GameRepository
 import com.example.alp_vp.data.repository.TransactionRepository
 import com.example.alp_vp.data.repository.ProfileRepository
@@ -40,13 +41,15 @@ data class GameSpending(
 class HomeViewModel(
     private val transactionRepository: TransactionRepository,
     private val gameRepository: GameRepository,
-    private val profileRepository: ProfileRepository
+    private val profileRepository: ProfileRepository,
+    private val sessionManager: SessionManager
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
 
-    private val currentProfileId: Int = 1
+    private val currentProfileId: Int
+        get() = sessionManager.getUserId()
 
     init {
         loadData()
@@ -191,7 +194,8 @@ class HomeViewModel(
                 HomeViewModel(
                     transactionRepository = application.container.transactionRepository,
                     gameRepository = application.container.gameRepository,
-                    profileRepository = application.container.profileRepository
+                    profileRepository = application.container.profileRepository,
+                    sessionManager = application.container.sessionManager
                 )
             }
         }

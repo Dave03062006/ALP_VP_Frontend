@@ -37,6 +37,15 @@ fun VoucherCard(
     userPoints: Int,
     onPurchase: () -> Unit
 ) {
+    // Debug logging with null safety
+    try {
+        println("VoucherCard: Rendering voucher")
+        println("VoucherCard: ID=${voucher.id}, Name='${voucher.voucherName}'")
+        println("VoucherCard: value=${voucher.value}, pointsCost=${voucher.pointsCost}, stock=${voucher.stock}")
+    } catch (e: Exception) {
+        println("VoucherCard: Error logging voucher data: ${e.message}")
+    }
+
     val hasEnoughPoints = userPoints >= voucher.pointsCost
     val isOutOfStock = voucher.stock == 0
     val stockText = when {
@@ -45,6 +54,9 @@ fun VoucherCard(
         voucher.stock < 10 -> "Only ${voucher.stock} left!"
         else -> "In Stock"
     }
+
+    val voucherNameText = voucher.voucherName.takeIf { it.isNotBlank() } ?: "Unknown Voucher"
+    val discountText = "Get $${String.format("%.2f", voucher.value)} discount"
 
     Card(
         modifier = Modifier
@@ -66,28 +78,39 @@ fun VoucherCard(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             // Left side - Voucher info
-            Column(modifier = Modifier.weight(1f)) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
+            Column(
+                modifier = Modifier.weight(1f)
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(bottom = 6.dp)
+                ) {
                     Icon(
                         Icons.Default.Email,
                         contentDescription = null,
-                        tint = if (isOutOfStock) Color.Gray else Color(0xFF8B4513)
+                        tint = if (isOutOfStock) Color.Gray else Color(0xFF8B4513),
+                        modifier = Modifier.size(20.dp)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        voucher.voucherName,
+                        text = voucherNameText,
                         fontWeight = FontWeight.SemiBold,
                         color = if (isOutOfStock) Color.Gray else Color.Black,
-                        fontSize = 14.sp
+                        fontSize = 14.sp,
+                        maxLines = 2
                     )
                 }
-                Spacer(modifier = Modifier.height(6.dp))
+
+                Spacer(modifier = Modifier.height(4.dp))
+
                 Text(
-                    "Get $${String.format("%.2f", voucher.value)} discount",
+                    text = discountText,
                     fontSize = 12.sp,
                     color = if (isOutOfStock) Color.Gray else Color(0xFF6B4FA0)
                 )
+
                 Spacer(modifier = Modifier.height(8.dp))
+
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
                         Icons.Default.Favorite,
@@ -97,7 +120,7 @@ fun VoucherCard(
                     )
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
-                        "${voucher.pointsCost} Points",
+                        text = "${voucher.pointsCost} Points",
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Medium,
                         color = if (isOutOfStock) Color.Gray else Color.Black
@@ -109,18 +132,18 @@ fun VoucherCard(
 
             // Right side - Stock and Purchase button
             Column(
-                horizontalAlignment = Alignment.End,
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalAlignment = Alignment.End
             ) {
                 Text(
-                    stockText,
+                    text = stockText,
                     color = when {
                         isOutOfStock -> Color.Gray
                         voucher.stock in 1..9 -> Color(0xFFFF6B6B)
                         else -> Color(0xFF0FA97A)
                     },
                     fontWeight = FontWeight.Bold,
-                    fontSize = 12.sp
+                    fontSize = 12.sp,
+                    modifier = Modifier.padding(bottom = 8.dp)
                 )
                 Button(
                     onClick = onPurchase,
@@ -158,8 +181,7 @@ fun VoucherCardPreview() {
             voucherName = "10% Discount",
             value = 10.0,
             pointsCost = 100,
-            stock = 50,
-            createdAt = ""
+            stock = 50
         ),
         userPoints = 150,
         onPurchase = {}

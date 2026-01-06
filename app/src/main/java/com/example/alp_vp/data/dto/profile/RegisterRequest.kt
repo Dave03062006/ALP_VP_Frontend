@@ -1,8 +1,4 @@
 package com.example.alp_vp.data.dto
 
-data class RegisterRequest(
-    val username: String,
-    val email: String,
-    val password: String,
-    val displayName: String? = null
-)
+// Type alias to avoid duplication - use the auth package version
+typealias RegisterRequest = com.example.alp_vp.data.dto.auth.RegisterRequest
