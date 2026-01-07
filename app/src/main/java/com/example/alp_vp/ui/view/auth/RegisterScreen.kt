@@ -11,9 +11,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -67,18 +67,30 @@ fun RegisterScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
+            // Back button at the top-left to return to Login
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp),
+                horizontalArrangement = Arrangement.Start
+            ) {
+                IconButton(onClick = onNavigateToLogin) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = "Back to Login",
+                        tint = Color(0xFF6B4FA0)
+                    )
+                }
+            }
+
             Spacer(modifier = Modifier.height(40.dp))
 
-            // Logo - Use placeholder until you add your logo
-            Icon(
-                imageVector = Icons.Default.Star,
-                contentDescription = "Game Tracker Logo",
-                modifier = Modifier.size(100.dp),
-                tint = Color(0xFFD946EF)
+            // Logo
+            Image(
+                painter = painterResource(id = R.drawable.logo),
+                contentDescription = "App Logo",
+                modifier = Modifier.size(150.dp)
             )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
             // Welcome Text
             Text(
                 text = "Create Account",
