@@ -382,7 +382,7 @@ fun TransactionDialog(
                         },
                         prefix = {
                             Text(
-                                "Rp ",
+                                "Rp ${"%,.0f".format(amount.toDoubleOrNull() ?: 0.0)}",
                                 fontWeight = FontWeight.SemiBold,
                                 color = Color(0xFFD946EF)
                             )

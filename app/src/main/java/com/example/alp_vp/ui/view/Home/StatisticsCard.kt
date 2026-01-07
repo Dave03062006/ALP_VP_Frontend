@@ -61,7 +61,7 @@ fun StatisticsCard(
                 ) {
                     StatCard(
                         title = "Total Spent",
-                        value = "Rp ${String.format("%.0f", statistics?.totalSpent ?: 0.0)}",
+                        value = "Rp ${"%,.0f".format(statistics?.totalSpent ?: 0.0)}",
                         icon = Icons.Default.AttachMoney,
                         backgroundColor = Color(0xFFE9D5FF),
                         modifier = Modifier.weight(1f)
@@ -133,7 +133,7 @@ fun StatCard(
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = value,
-                fontSize = 20.sp,
+                fontSize = 16.sp,
                 fontWeight = FontWeight.Bold
             )
         }
