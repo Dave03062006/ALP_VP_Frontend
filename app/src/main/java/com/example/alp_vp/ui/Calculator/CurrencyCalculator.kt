@@ -1,4 +1,4 @@
-package com.example.alp_vp.ui.view.Home
+package com.example.alp_vp.ui.Calculator
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke

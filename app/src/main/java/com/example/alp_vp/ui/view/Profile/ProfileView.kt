@@ -45,6 +45,7 @@ import java.util.*
 @Composable
 fun ProfileView(
     navController: NavController,
+    onLogout: () -> Unit,
     viewModel: ProfileViewModel = viewModel(factory = ProfileViewModel.Factory)
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -237,9 +238,7 @@ fun ProfileView(
                     onClick = {
                         viewModel.logout()
                         showLogoutDialog = false
-                        navController.navigate("login") {
-                            popUpTo(0) { inclusive = true }
-                        }
+                        onLogout()  // Call the logout callback to navigate back to login
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = themeColor)
                 ) {
@@ -989,7 +988,7 @@ fun ThemeOption(
         modifier = Modifier
             .fillMaxWidth()
             .aspectRatio(0.9f)
-            .border(2.dp, borderColor, RoundedCornerShape(16.dp))  // Reduced from 3.dp
+            .border(0.5.dp, borderColor, RoundedCornerShape(16.dp))  // Reduced from 3.dp
             .clickable(enabled = theme.isUnlocked, onClick = onClick),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(

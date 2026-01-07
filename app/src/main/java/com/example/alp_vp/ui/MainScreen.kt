@@ -23,6 +23,7 @@ import com.example.alp_vp.ui.view.auth.RegisterScreen
 import com.example.alp_vp.ui.view.gacha.GachaScreen
 import com.example.alp_vp.ui.viewmodel.GachaViewModel
 import com.example.alp_vp.ui.view.Profile.ProfileView
+import com.example.alp_vp.ui.Calculator.CurrencyCalculatorView
 
 @Composable
 fun MainScreen() {
@@ -83,7 +84,6 @@ fun MainScreen() {
 @Composable
 fun MainAppScreen(onLogout: () -> Unit) {
     val context = LocalContext.current
-    val application = context.applicationContext as VPApplication
     val navController = rememberNavController()
 
     Scaffold(
@@ -98,19 +98,19 @@ fun MainAppScreen(onLogout: () -> Unit) {
                 HomeView(navController)
             }
             composable(Screen.Calculator.route) {
-                // TODO: CurrencyCalculatorView()
+                CurrencyCalculatorView()
             }
             composable(Screen.Gacha.route) {
-                val gachaViewModel = remember {
-                    GachaViewModel(application.container.gachaRepository)
-                }
-                GachaScreen(viewModel = gachaViewModel)
+                GachaScreen(viewModel = androidx.lifecycle.viewmodel.compose.viewModel(factory = GachaViewModel.Factory))
             }
             composable(Screen.History.route) {
                 // TODO: HistoryView()
             }
             composable(Screen.Profile.route) {
-                ProfileView(navController = navController)
+                ProfileView(
+                    navController = navController,
+                    onLogout = onLogout  // Pass the logout callback
+                )
             }
             composable(Screen.Shop.route) {
                 ShopView(

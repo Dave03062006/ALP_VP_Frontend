@@ -34,13 +34,15 @@ data class ProfileUiState(
 
 class ProfileViewModel(
     application: Application,
-    private val profileRepository: ProfileRepository
+    private val profileRepository: ProfileRepository,
+    private val sessionManager: com.example.alp_vp.data.local.SessionManager
 ) : AndroidViewModel(application) {
 
     private val _uiState = MutableStateFlow(ProfileUiState())
     val uiState: StateFlow<ProfileUiState> = _uiState.asStateFlow()
 
-    private val currentProfileId = 1 // Hardcoded for now, should come from auth
+    private val currentProfileId: Int
+        get() = sessionManager.getUserId()
 
     init {
         loadProfileData()
@@ -131,8 +133,8 @@ class ProfileViewModel(
     }
 
     fun logout() {
-        // Clear any stored auth data
-        // This should be handled by auth manager
+        // Clear session data from SessionManager
+        sessionManager.logout()
         _uiState.update { ProfileUiState() }
     }
 
@@ -142,10 +144,10 @@ class ProfileViewModel(
                 val application = (this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as VPApplication)
                 ProfileViewModel(
                     application = application,
-                    profileRepository = application.container.profileRepository
+                    profileRepository = application.container.profileRepository,
+                    sessionManager = application.container.sessionManager
                 )
             }
         }
     }
 }
-

@@ -124,7 +124,7 @@ fun HomeView(
 
     if(showTransactionDialog){
         TransactionDialog(
-            profileId = 1, // Using hardcoded profileId of 1 as per ViewModel
+            profileId = application.container.sessionManager.getUserId(),
             eventRepository = application.container.eventRepository,
             onDismiss = { showTransactionDialog = false },
             onConfirm = { transactionRequest ->

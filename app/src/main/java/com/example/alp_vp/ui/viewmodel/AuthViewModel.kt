@@ -29,13 +29,6 @@ class AuthViewModel(
     private val _uiState = MutableStateFlow(AuthUiState())
     val uiState: StateFlow<AuthUiState> = _uiState.asStateFlow()
 
-    init {
-        // Check if user is already logged in
-        _uiState.value = _uiState.value.copy(
-            isAuthenticated = sessionManager.isLoggedIn()
-        )
-    }
-
     fun login(username: String, password: String) {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
@@ -94,4 +87,3 @@ class AuthViewModel(
         }
     }
 }
-
