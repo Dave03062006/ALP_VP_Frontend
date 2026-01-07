@@ -7,7 +7,8 @@ data class GameResponse(
     val name: String,
     val iconUrl: String?,
     val currency: String? = "Currency",
-    val isActive: Boolean? = true
+    val pricePerUnit: Double? = 0.0,
+    val standardBundles: List<Int>? = listOf()
 )
 
 data class ConvertCurrencyRequest(

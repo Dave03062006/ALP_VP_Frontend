@@ -1,5 +1,12 @@
 package com.example.alp_vp.service
 
+<<<<<<< Updated upstream
+=======
+import com.example.alp_vp.data.dto.game.GameResponse
+import com.example.alp_vp.dto.ConversionResultResponse
+import com.example.alp_vp.dto.ConvertCurrencyRequest
+import com.example.alp_vp.dto.CurrencyRateResponse
+>>>>>>> Stashed changes
 import com.example.alp_vp.model.*
 import retrofit2.http.Body
 import retrofit2.http.GET
