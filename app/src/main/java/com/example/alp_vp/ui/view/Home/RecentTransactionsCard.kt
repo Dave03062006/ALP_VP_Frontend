@@ -108,7 +108,7 @@ fun TransactionItem(transaction: TransactionResponse) {
             }
             Column(horizontalAlignment = Alignment.End) {
                 Text(
-                    text = "$${String.format("%.2f", transaction.amount)}",
+                    text = "Rp ${String.format("%.2f", transaction.amount)}",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.Black

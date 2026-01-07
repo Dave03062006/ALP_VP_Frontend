@@ -24,6 +24,7 @@ import com.example.alp_vp.ui.view.gacha.GachaScreen
 import com.example.alp_vp.ui.viewmodel.GachaViewModel
 import com.example.alp_vp.ui.view.Profile.ProfileView
 import com.example.alp_vp.ui.Calculator.CurrencyCalculatorView
+import com.example.alp_vp.ui.view.History.HistoryView
 
 @Composable
 fun MainScreen() {
@@ -104,7 +105,7 @@ fun MainAppScreen(onLogout: () -> Unit) {
                 GachaScreen(viewModel = androidx.lifecycle.viewmodel.compose.viewModel(factory = GachaViewModel.Factory))
             }
             composable(Screen.History.route) {
-                // TODO: HistoryView()
+                HistoryView()
             }
             composable(Screen.Profile.route) {
                 ProfileView(
