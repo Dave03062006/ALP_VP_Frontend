@@ -3,7 +3,7 @@ package com.example.alp_vp.ui.model
 data class GachaResultUi(
     val itemId: Int,
     val itemName: String,
-    val imageUrl: String // ✅ WAJIB
+    val imageUrl: String
 )
 
 data class GachaUiState(

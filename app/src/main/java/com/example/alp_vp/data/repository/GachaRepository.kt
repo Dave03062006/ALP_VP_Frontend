@@ -16,7 +16,7 @@ class GachaRepository(
         val request = GachaRequest(
             profileId = profileId,
             gameId = gameId,
-            rolls = rolls
+            rolls = rolls,
         )
 
         return gachaService.performGacha(request)

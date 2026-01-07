@@ -13,18 +13,26 @@ class GachaViewModel(
     private val repository: GachaRepository
 ) : ViewModel() {
 
+    // ✅ GAME YANG DIPILIH
+    private val _selectedGameId = MutableStateFlow(1)
+    val selectedGameId: StateFlow<Int> = _selectedGameId
+
+    fun selectGame(gameId: Int) {
+        _selectedGameId.value = gameId
+    }
+
+    // ✅ UI STATE
     private val _uiState = MutableStateFlow(GachaUiState())
     val uiState: StateFlow<GachaUiState> = _uiState
 
     private val profileId = 1
-    private val gameId = 1
 
     fun singlePull() {
-        rollGacha(profileId, gameId, rolls = 1)
+        rollGacha(profileId, selectedGameId.value, 1)
     }
 
     fun tenPull() {
-        rollGacha(profileId, gameId, rolls = 10)
+        rollGacha(profileId, selectedGameId.value, 10)
     }
 
     private fun rollGacha(profileId: Int, gameId: Int, rolls: Int) {
@@ -37,7 +45,8 @@ class GachaViewModel(
                 val uiResults = response.data.results.map {
                     GachaResultUi(
                         itemId = it.itemId,
-                        itemName = it.itemName
+                        itemName = it.itemName,
+                        imageUrl = it.imageUrl
                     )
                 }
 
@@ -57,4 +66,3 @@ class GachaViewModel(
         }
     }
 }
-

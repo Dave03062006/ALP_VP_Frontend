@@ -13,5 +13,6 @@ data class GachaData(
 
 data class GachaResultDto(
     val itemId: Int,
-    val itemName: String
+    val itemName: String,
+    val imageUrl: String
 )
