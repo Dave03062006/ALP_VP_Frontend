@@ -1,13 +1,10 @@
-package com.example.alp_vp.service
+package com.example.alp_vp. service
 
-<<<<<<< Updated upstream
-=======
-import com.example.alp_vp.data.dto.game.GameResponse
-import com.example.alp_vp.dto.ConversionResultResponse
-import com.example.alp_vp.dto.ConvertCurrencyRequest
+import com. example.alp_vp.dto. ConversionResultResponse
+import com.example.alp_vp. dto.ConvertCurrencyRequest
 import com.example.alp_vp.dto.CurrencyRateResponse
->>>>>>> Stashed changes
-import com.example.alp_vp.model.*
+import com.example.alp_vp.dto.GameResponse
+import com. example.alp_vp.model.*
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -15,12 +12,12 @@ import retrofit2.http.Query
 
 interface CurrencyApiService {
 
-    @GET("/games")
+    @GET("/api/games")  // Added /api prefix
     suspend fun getAllGames(): WebResponse<List<GameResponse>>
 
-    @POST("/currency/convert")
+    @POST("/api/currency/convert")  // Added /api prefix
     suspend fun convertCurrency(@Body request: ConvertCurrencyRequest): WebResponse<ConversionResultResponse>
 
-    @GET("/currency-rates")
+    @GET("/api/currency-rates")  // Added /api prefix
     suspend fun getCurrencyRates(@Query("gameId") gameId: Int): WebResponse<List<CurrencyRateResponse>>
 }

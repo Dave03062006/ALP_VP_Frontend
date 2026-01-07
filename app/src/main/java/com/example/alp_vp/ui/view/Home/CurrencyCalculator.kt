@@ -94,7 +94,23 @@ class CalculatorViewModel : ViewModel() {
         val valAmount = amount.toIntOrNull() ?: 0
         calculatedCost = valAmount * currentRate
     }
-
+    // Add this function to the CalculatorViewModel class
+    fun fetchExchangeRate(gameId: Int) {
+        viewModelScope.launch {
+            try {
+                val response = repository.getCurrencyRates(gameId)
+                val rates = response.data
+                if (rates.isNotEmpty()) {
+                    currentRate = rates[0].toIDR
+                } else {
+                    currentRate = 0.0
+                }
+            } catch (e: Exception) {
+                errorMessage = "Failed to fetch exchange rate:  ${e.message}"
+                currentRate = 0.0
+            }
+        }
+    }
     fun getBundlesForGame(gameName: String): List<Int> {
         return standardBundlesMap[gameName] ?: listOf(100, 500, 1000)
     }
