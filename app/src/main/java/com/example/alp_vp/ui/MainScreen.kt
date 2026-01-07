@@ -57,7 +57,15 @@ fun MainScreen() {
 
         composable("register") {
             RegisterScreen(
-                onNavigateToLogin = { navController.navigate("login") },
+                onNavigateToLogin = {
+                    // Try popping back first; if there's no backstack entry, navigate to login explicitly
+                    val popped = navController.popBackStack()
+                    if (!popped) {
+                        navController.navigate("login") {
+                            popUpTo("register") { inclusive = true }
+                        }
+                    }
+                },
                 onRegisterSuccess = {
                     isLoggedIn = true
                     navController.navigate("main_app") {

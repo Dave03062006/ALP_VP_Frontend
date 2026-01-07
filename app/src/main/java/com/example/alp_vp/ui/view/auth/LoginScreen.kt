@@ -68,11 +68,8 @@ fun LoginScreen(
             Image(
                 painter = painterResource(id = R.drawable.logo),
                 contentDescription = "App Logo",
-                modifier = Modifier.size(100.dp)
+                modifier = Modifier.size(150.dp)
             )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
             // Welcome Text
             Text(
                 text = "Welcome Back!",

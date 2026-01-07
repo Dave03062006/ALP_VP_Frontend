@@ -14,7 +14,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.alp_vp.ui.viewmodel.GameSpending
-
+import kotlin.text.toDouble
+import java.text.NumberFormat
+import java.util.Locale
 @Composable
 fun SpendingByGameCard(gameSpendingRanking: List<GameSpending> = emptyList()) {
     var expanded by remember { mutableStateOf(true) }
@@ -83,6 +85,9 @@ fun SpendingByGameCard(gameSpendingRanking: List<GameSpending> = emptyList()) {
 
 @Composable
 fun GameSpendingItem(rank: Int, gameSpending: GameSpending) {
+    val rupiahFormat = NumberFormat.getCurrencyInstance(Locale("in", "ID"))
+    val formattedTransactionCount = rupiahFormat.format(gameSpending.transactionCount.toDouble())
+
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(8.dp),
@@ -136,7 +141,7 @@ fun GameSpendingItem(rank: Int, gameSpending: GameSpending) {
                         fontWeight = FontWeight.SemiBold
                     )
                     Text(
-                        text = "${gameSpending.transactionCount} transaction${if (gameSpending.transactionCount != 1) "s" else ""}",
+                        text = "$formattedTransactionCount transaction${if (gameSpending.transactionCount != 1) "s" else ""}",
                         fontSize = 12.sp,
                         color = Color.Gray
                     )
@@ -145,7 +150,7 @@ fun GameSpendingItem(rank: Int, gameSpending: GameSpending) {
 
             Column(horizontalAlignment = Alignment.End) {
                 Text(
-                    text = "$${String.format("%.2f", gameSpending.totalSpent)}",
+                    text = "Rp ${"%,.2f".format(gameSpending.totalSpent)}",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color(0xFFD946EF)
