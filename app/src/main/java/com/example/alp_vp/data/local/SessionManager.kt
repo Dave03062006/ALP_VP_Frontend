@@ -39,10 +39,42 @@ class SessionManager(context: Context) {
 
     fun getDisplayName(): String? = prefs.getString(KEY_DISPLAY_NAME, null)
 
-    fun isLoggedIn(): Boolean = prefs.getBoolean(KEY_IS_LOGGED_IN, false)
+    fun isLoggedIn(): Boolean {
+        val hasToken = prefs.getString(KEY_TOKEN, null) != null
+        val isLoggedInFlag = prefs.getBoolean(KEY_IS_LOGGED_IN, false)
+        val hasUserId = prefs.getInt(KEY_USER_ID, -1) != -1
+
+        // User is only logged in if they have a token, the flag is set, AND they have a valid user ID
+        return hasToken && isLoggedInFlag && hasUserId
+    }
 
     fun logout() {
         prefs.edit().clear().apply()
     }
-}
 
+    fun getProfileData(): com.example.alp_vp.data.dto.auth.ProfileData? {
+        if (!isLoggedIn()) return null
+
+        val userId = getUserId()
+        val username = getUsername()
+        val email = getEmail()
+        val displayName = getDisplayName()
+        val points = getPoints()
+
+        if (userId == -1 || username == null) return null
+
+        return com.example.alp_vp.data.dto.auth.ProfileData(
+            id = userId,
+            username = username,
+            email = email,
+            displayName = displayName,
+            points = points,
+            totalSpent = 0.0,  // Add missing parameter
+            achievementCount = 0  // Add missing parameter
+        )
+    }
+
+    private fun getEmail(): String? = prefs.getString(KEY_EMAIL, null)
+
+    private fun getPoints(): Int = prefs.getInt(KEY_POINTS, 0)
+}

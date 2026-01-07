@@ -117,7 +117,17 @@ class HomeViewModel(
 
     private fun calculateStatistics(transactions: List<TransactionResponse>): TransactionStatisticsResponse {
         val totalSpent = transactions
-            .filter { it.transactionType?.typeName?.lowercase()?.contains("purchase") == true || it.amount < 0 }
+            .filter {
+                // Consider it a purchase if:
+                // 1. Amount is positive (user spent money)
+                // 2. OR transaction type contains "purchase", "bundle", or "discount"
+                it.amount > 0 ||
+                it.transactionType?.typeName?.lowercase()?.let { typeName ->
+                    typeName.contains("purchase") ||
+                    typeName.contains("bundle") ||
+                    typeName.contains("discount")
+                } == true
+            }
             .sumOf { kotlin.math.abs(it.amount) }
 
         val totalEarned = transactions
@@ -138,7 +148,15 @@ class HomeViewModel(
         val gameSpendingList = gameGroups.map { (gameId, gameTransactions) ->
             val gameName = gameTransactions.firstOrNull()?.game?.name ?: "Unknown Game"
             val totalSpent = gameTransactions
-                .filter { it.transactionType?.typeName?.lowercase()?.contains("purchase") == true || it.amount < 0 }
+                .filter {
+                    // Use the same logic as calculateStatistics
+                    it.amount > 0 ||
+                    it.transactionType?.typeName?.lowercase()?.let { typeName ->
+                        typeName.contains("purchase") ||
+                        typeName.contains("bundle") ||
+                        typeName.contains("discount")
+                    } == true
+                }
                 .sumOf { kotlin.math.abs(it.amount) }
 
             GameSpending(
@@ -161,8 +179,10 @@ class HomeViewModel(
                 val createdTransaction = transactionRepository.createTransaction(currentProfileId, request)
                 println("DEBUG: Transaction created successfully: ${createdTransaction.id}")
 
-                // Reload data after creating transaction
+                // Reload all data to ensure everything is fresh
                 loadData()
+
+                println("DEBUG: Data reloaded after transaction creation")
             } catch (e: Exception) {
                 println("ERROR: Failed to create transaction - ${e.message}")
                 e.printStackTrace()
@@ -175,16 +195,22 @@ class HomeViewModel(
     }
 
     fun selectGame(game: GameResponse?) {
+        println("DEBUG: Selecting game: ${game?.name ?: "All Games"}")
         _uiState.value = _uiState.value.copy(selectedGame = game)
 
         // Re-filter transactions and recalculate statistics
         val filteredTransactions = filterTransactions(_uiState.value.allTransactions, game?.id)
         val filteredStatistics = calculateStatistics(filteredTransactions)
 
+        println("DEBUG: Filtered ${filteredTransactions.size} transactions")
+        println("DEBUG: Recalculated total spent: ${filteredStatistics.totalSpent}")
+
         _uiState.value = _uiState.value.copy(
             transactions = filteredTransactions.take(10),
             statistics = filteredStatistics
         )
+
+        println("DEBUG: State updated with new statistics")
     }
 
     companion object {

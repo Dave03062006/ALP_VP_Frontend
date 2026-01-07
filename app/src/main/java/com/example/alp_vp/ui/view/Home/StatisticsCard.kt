@@ -13,9 +13,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.alp_vp.data.dto.transaction.TransactionStatisticsResponse
+import com.example.alp_vp.ui.viewmodel.GameSpending
 
 @Composable
-fun StatisticsCard(statistics: TransactionStatisticsResponse? = null) {
+fun StatisticsCard(
+    statistics: TransactionStatisticsResponse? = null,
+    topGame: GameSpending? = null
+) {
     var expanded by remember { mutableStateOf(true) }
 
     Card(
@@ -57,15 +61,15 @@ fun StatisticsCard(statistics: TransactionStatisticsResponse? = null) {
                 ) {
                     StatCard(
                         title = "Total Spent",
-                        value = "$${String.format("%.2f", statistics?.totalSpent ?: 0.0)}",
+                        value = "Rp ${String.format("%.0f", statistics?.totalSpent ?: 0.0)}",
                         icon = Icons.Default.AttachMoney,
                         backgroundColor = Color(0xFFE9D5FF),
                         modifier = Modifier.weight(1f)
                     )
                     StatCard(
-                        title = "Total Earned",
-                        value = "$${String.format("%.2f", statistics?.totalEarned ?: 0.0)}",
-                        icon = Icons.Default.CalendarToday,
+                        title = "Total Points Earned",
+                        value = "${String.format("%.0f", statistics?.totalEarned ?: 0.0)} pts",
+                        icon = Icons.Default.Star,
                         backgroundColor = Color(0xFFBFDBFE),
                         modifier = Modifier.weight(1f)
                     )
@@ -82,9 +86,10 @@ fun StatisticsCard(statistics: TransactionStatisticsResponse? = null) {
                         backgroundColor = Color(0xFFA7F3D0),
                         modifier = Modifier.weight(1f)
                     )
+                    // Replace "Points" with "Top Game"
                     StatCard(
-                        title = "Points",
-                        value = "0",
+                        title = "Top Game",
+                        value = topGame?.gameName ?: "No data",
                         icon = Icons.Default.Gamepad,
                         backgroundColor = Color(0xFFFED7AA),
                         modifier = Modifier.weight(1f)

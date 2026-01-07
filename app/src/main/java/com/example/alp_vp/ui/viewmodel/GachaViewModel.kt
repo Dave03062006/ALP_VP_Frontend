@@ -1,7 +1,12 @@
 package com.example.alp_vp.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.alp_vp.VPApplication
+import com.example.alp_vp.data.local.SessionManager
 import com.example.alp_vp.data.repository.GachaRepository
 import com.example.alp_vp.ui.model.GachaResultUi
 import com.example.alp_vp.ui.model.GachaUiState
@@ -10,7 +15,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class GachaViewModel(
-    private val repository: GachaRepository
+    private val repository: GachaRepository,
+    private val sessionManager: SessionManager
 ) : ViewModel() {
 
     // ✅ GAME YANG DIPILIH
@@ -25,14 +31,17 @@ class GachaViewModel(
     private val _uiState = MutableStateFlow(GachaUiState())
     val uiState: StateFlow<GachaUiState> = _uiState
 
-    private val profileId = 1
+    private val currentProfileId: Int
+        get() = sessionManager.getUserId()
+
+    private val gameId = 1
 
     fun singlePull() {
-        rollGacha(profileId, selectedGameId.value, 1)
+        rollGacha(currentProfileId, gameId, rolls = 1)
     }
 
     fun tenPull() {
-        rollGacha(profileId, selectedGameId.value, 10)
+        rollGacha(currentProfileId, gameId, rolls = 10)
     }
 
     private fun rollGacha(profileId: Int, gameId: Int, rolls: Int) {
@@ -65,4 +74,17 @@ class GachaViewModel(
             }
         }
     }
+
+    companion object {
+        val Factory: ViewModelProvider.Factory = viewModelFactory {
+            initializer {
+                val application = (this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as VPApplication)
+                GachaViewModel(
+                    repository = application.container.gachaRepository,
+                    sessionManager = application.container.sessionManager
+                )
+            }
+        }
+    }
 }
+

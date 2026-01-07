@@ -4,6 +4,9 @@ import com.example.alp_vp.data.dto.item.ItemResponse
 import com.example.alp_vp.data.dto.LoginResponse
 import com.example.alp_vp.data.dto.Profile
 import com.example.alp_vp.data.dto.UpdateProfileRequest
+import com.example.alp_vp.data.dto.profile.Achievement
+import com.example.alp_vp.data.dto.profile.ProfileStatistics
+import com.example.alp_vp.data.dto.profile.ProfileTheme
 
 interface ProfileRepository {
     suspend fun register(req: com.example.alp_vp.data.dto.auth.RegisterRequest): Profile
@@ -12,4 +15,7 @@ interface ProfileRepository {
     suspend fun getProfile(id: Int): Profile
     suspend fun updateProfile(id: String, req: UpdateProfileRequest): Profile
     suspend fun getInventory(id: String): List<ItemResponse>
+    suspend fun getStatistics(id: Int): ProfileStatistics
+    suspend fun getAchievements(id: Int): List<Achievement>
+    suspend fun getThemes(id: Int): List<ProfileTheme>
 }

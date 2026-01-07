@@ -70,6 +70,7 @@ fun HomeView(
                 )
             }
 
+            // Points Card at the top (restored original position)
             PointsCard(
                 points = uiState.userPoints,
                 onShopClick = { navController.navigate(Screen.Shop.route) }
@@ -95,7 +96,11 @@ fun HomeView(
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             )
             Spacer(modifier = Modifier.height(16.dp))
-            StatisticsCard(statistics = uiState.statistics)
+            // Statistics Card now shows Top Game instead of Points
+            StatisticsCard(
+                statistics = uiState.statistics,
+                topGame = uiState.gameSpendingRanking.firstOrNull()
+            )
             Spacer(modifier = Modifier.height(16.dp))
             RecentTransactionsCard(transactions = uiState.transactions)
             Spacer(modifier = Modifier.height(16.dp))
@@ -124,7 +129,7 @@ fun HomeView(
 
     if(showTransactionDialog){
         TransactionDialog(
-            profileId = 1, // Using hardcoded profileId of 1 as per ViewModel
+            profileId = application.container.sessionManager.getUserId(),
             eventRepository = application.container.eventRepository,
             onDismiss = { showTransactionDialog = false },
             onConfirm = { transactionRequest ->

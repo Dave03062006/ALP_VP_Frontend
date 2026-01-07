@@ -40,6 +40,15 @@ interface ApiService {
     @GET("profiles/{id}/inventory")
     suspend fun getInventory(@Path("id") id: String): Response<List<InventoryItemResponse>>
 
+    @GET("profiles/{id}/statistics")
+    suspend fun getProfileStatistics(@Path("id") id: Int): Response<com.example.alp_vp.data.dto.profile.ProfileStatistics>
+
+    @GET("profiles/{id}/achievements")
+    suspend fun getProfileAchievements(@Path("id") id: Int): Response<List<com.example.alp_vp.data.dto.profile.Achievement>>
+
+    @GET("profiles/{id}/themes")
+    suspend fun getProfileThemes(@Path("id") id: Int): Response<List<com.example.alp_vp.data.dto.profile.ProfileTheme>>
+
     // Games
     @POST("games")
     suspend fun createGame(@Body body: CreateGameRequest): Response<GameResponse>

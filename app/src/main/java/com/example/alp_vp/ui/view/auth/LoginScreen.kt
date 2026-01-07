@@ -64,11 +64,11 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(40.dp))
 
             // Logo - Use placeholder until you add your logo
-            Icon(
-                imageVector = Icons.Default.Star,
-                contentDescription = "Game Tracker Logo",
-                modifier = Modifier.size(100.dp),
-                tint = Color(0xFFD946EF)
+
+            Image(
+                painter = painterResource(id = R.drawable.logo),
+                contentDescription = "App Logo",
+                modifier = Modifier.size(100.dp)
             )
 
             Spacer(modifier = Modifier.height(16.dp))
