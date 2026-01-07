@@ -4,6 +4,7 @@ import android.content.Context
 import com.example.alp_vp.data.local.SessionManager
 import com.example.alp_vp.data.repository.*
 import com.example.alp_vp.data.service.ApiService
+import com.example.alp_vp.data.service.GachaService
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -19,6 +20,7 @@ interface AppContainer {
     val eventRepository: EventRepository
     val transactionRepository: TransactionRepository
     val itemRepository: ItemRepository
+    val gachaRepository: GachaRepository
 }
 
 class DefaultAppContainer(private val context: Context) : AppContainer {
@@ -57,6 +59,10 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
         retrofit.create(ApiService::class.java)
     }
 
+    private val gachaService: GachaService by lazy {
+        retrofit.create(GachaService::class.java)
+    }
+
     // Repositories
     override val authRepository: AuthRepository by lazy {
         ApiAuthRepository(apiService)
@@ -84,5 +90,9 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
 
     override val itemRepository: ItemRepository by lazy {
         ApiItemRepository(apiService)
+    }
+
+    override val gachaRepository: GachaRepository by lazy {
+        GachaRepository(gachaService)
     }
 }

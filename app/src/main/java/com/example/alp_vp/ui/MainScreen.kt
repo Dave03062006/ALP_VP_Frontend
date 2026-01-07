@@ -3,7 +3,6 @@ package com.example.alp_vp.ui
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -21,6 +20,9 @@ import com.example.alp_vp.ui.view.Shop.ShopView
 import com.example.alp_vp.ui.view.Shop.PurchaseHistoryView
 import com.example.alp_vp.ui.view.auth.LoginScreen
 import com.example.alp_vp.ui.view.auth.RegisterScreen
+import com.example.alp_vp.ui.view.gacha.GachaScreen
+import com.example.alp_vp.ui.viewmodel.GachaViewModel
+import com.example.alp_vp.ui.view.Profile.ProfileView
 
 @Composable
 fun MainScreen() {
@@ -80,6 +82,8 @@ fun MainScreen() {
 
 @Composable
 fun MainAppScreen(onLogout: () -> Unit) {
+    val context = LocalContext.current
+    val application = context.applicationContext as VPApplication
     val navController = rememberNavController()
 
     Scaffold(
@@ -97,13 +101,16 @@ fun MainAppScreen(onLogout: () -> Unit) {
                 // TODO: CurrencyCalculatorView()
             }
             composable(Screen.Gacha.route) {
-                // TODO: GachaView()
+                val gachaViewModel = remember {
+                    GachaViewModel(application.container.gachaRepository)
+                }
+                GachaScreen(viewModel = gachaViewModel)
             }
             composable(Screen.History.route) {
                 // TODO: HistoryView()
             }
             composable(Screen.Profile.route) {
-                // TODO: ProfileView(onLogout = onLogout)
+                ProfileView(navController = navController)
             }
             composable(Screen.Shop.route) {
                 ShopView(

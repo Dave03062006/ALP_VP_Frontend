@@ -108,4 +108,28 @@ class ApiProfileRepository(private val service: ApiService) : ProfileRepository 
         }
         throw IOException("Get inventory failed: ${resp.code()} ${resp.message()}")
     }
+
+    override suspend fun getStatistics(id: Int): com.example.alp_vp.data.dto.profile.ProfileStatistics {
+        val resp = service.getProfileStatistics(id)
+        if (resp.isSuccessful) {
+            return resp.body() ?: throw IOException("Empty response")
+        }
+        throw IOException("Get statistics failed: ${resp.code()} ${resp.message()}")
+    }
+
+    override suspend fun getAchievements(id: Int): List<com.example.alp_vp.data.dto.profile.Achievement> {
+        val resp = service.getProfileAchievements(id)
+        if (resp.isSuccessful) {
+            return resp.body() ?: emptyList()
+        }
+        throw IOException("Get achievements failed: ${resp.code()} ${resp.message()}")
+    }
+
+    override suspend fun getThemes(id: Int): List<com.example.alp_vp.data.dto.profile.ProfileTheme> {
+        val resp = service.getProfileThemes(id)
+        if (resp.isSuccessful) {
+            return resp.body() ?: emptyList()
+        }
+        throw IOException("Get themes failed: ${resp.code()} ${resp.message()}")
+    }
 }
