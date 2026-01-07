@@ -788,7 +788,7 @@ fun AchievementItem(
                 Color(0xFFF9FAFB)
         ),
         elevation = CardDefaults.cardElevation(
-            defaultElevation = if (achievement.isUnlocked) 2.dp else 0.dp
+            defaultElevation = if (achievement.isUnlocked) 1.dp else 0.dp  // Reduced from 2.dp to 1.dp
         )
     ) {
         Row(
